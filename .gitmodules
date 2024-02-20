@@ -1,3 +1,6 @@
 [submodule "admin-panel"]
 	path = admin-panel
 	url = https://github.com/oracularhades/rover-admin-panel.git
+[submodule "server/crates/lettre"]
+	path = server/crates/lettre
+	url = https://github.com/hades-mirror/lettre.git

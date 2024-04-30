@@ -11,6 +11,8 @@ diesel_migrations = "2"
 rand = "0.8.5"
 serde = "1.0.196"
 hades_auth = { version = "0.1.3", path = "crates/rust" }
+url = "2.5.0"
+hex-literal = "0.4.1"
 
 [dependencies.sqlx]
 version = "0.7.0"

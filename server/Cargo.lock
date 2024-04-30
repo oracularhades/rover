@@ -1078,6 +1078,7 @@ dependencies = [
  "base64 0.21.7",
  "domain",
  "hex",
+ "hex-literal",
  "jwt",
  "openssl",
  "oracularhades-mirror-frank_jwt",
@@ -1086,6 +1087,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "serde_urlencoded",
  "sha2",
  "tokio",
  "trust-dns-resolver",
@@ -1149,6 +1151,12 @@ name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
+
+[[package]]
+name = "hex-literal"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 
 [[package]]
 name = "hkdf"
@@ -2604,12 +2612,14 @@ dependencies = [
  "diesel",
  "diesel_migrations",
  "hades_auth",
+ "hex-literal",
  "rand",
  "rocket",
  "rocket_db_pools",
  "rocket_sync_db_pools",
  "serde",
  "sqlx",
+ "url",
 ]
 
 [[package]]

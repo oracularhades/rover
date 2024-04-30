@@ -1,3 +1,4 @@
 *.ds
 
 /server/target
+/desktop-runtime/target

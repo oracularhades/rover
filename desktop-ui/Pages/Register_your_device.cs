@@ -1,6 +1,10 @@
-﻿namespace rover_desktop_ui
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
+
+namespace rover_desktop_ui
 {
-    public partial class Register_your_device : ContentPage
+    public partial class Register_your_device : ContentView, INotifyPropertyChanged
     {
         public Register_your_device()
         {

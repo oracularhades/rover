@@ -2,3 +2,6 @@
 
 /server/target
 /desktop-runtime/target
+/desktop-ui/bin
+/desktop-ui/obj
+/desktop-ui/.vs

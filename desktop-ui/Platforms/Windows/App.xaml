@@ -1,0 +1,8 @@
+﻿<maui:MauiWinUIApplication
+    x:Class="rover_desktop_ui.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:maui="using:Microsoft.Maui"
+    xmlns:local="using:rover_desktop_ui.WinUI">
+
+</maui:MauiWinUIApplication>

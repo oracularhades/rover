@@ -10,6 +10,15 @@
         private void OnCounterClicked(object sender, EventArgs e)
         {
         }
-    }
 
+        private void OnRegisterPageClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new Register_your_device());
+        }
+
+        private void OnHomePageClicked(object sender, EventArgs e)
+        {
+            Navigation.PushAsync(new HomePage());
+        }
+    }
 }

@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:custom_components="clr-namespace:rover_desktop_ui"
              x:Class="rover_desktop_ui.MainPage"
              Shell.NavBarIsVisible="false">
 
@@ -9,30 +10,23 @@
             Padding="30,20"
             Spacing="16">
             
-            <VerticalStackLayout>
-                <Label
-                    Text="Register your device"
-                    FontSize="20" />
-            </VerticalStackLayout>
+            <Button
+                x:Name="register_button"
+                Text="Register page" 
+                SemanticProperties.Hint="Allows user to loginto Rover server and register their device"
+                Clicked="OnRegisterPageClicked"
+                HorizontalOptions="Start"
+                FontSize="14" 
+            />
 
-            <VerticalStackLayout Spacing="8">
-                <Label 
-                    Text="Enter your company website (example.com/microsoft.com)"
-                    TextColor="DarkGrey"
-                    FontSize="14"
-                />
-
-                <Entry Placeholder="rover.motionfans.com" WidthRequest="400" HorizontalOptions="Start" />
-
-                <Button
-                    x:Name="register_button"
-                    Text="Register" 
-                    SemanticProperties.Hint="Allows user to loginto Rover server and register their device"
-                    Clicked="OnCounterClicked"
-                    HorizontalOptions="Start"
-                    FontSize="14" 
-                />
-            </VerticalStackLayout>
+            <Button
+                x:Name="home_button"
+                Text="Home page"
+                SemanticProperties.Hint="Allows user to loginto Rover server and register their device"
+                Clicked="OnHomePageClicked"
+                HorizontalOptions="Start"
+                FontSize="14" 
+            />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

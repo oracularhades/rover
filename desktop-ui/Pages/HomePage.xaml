@@ -9,13 +9,14 @@
             Padding="30,20"
             Spacing="16">
             
-            <VerticalStackLayout>
-                <Label
-                    Text="ACME Inc"
-                    FontSize="20" />
-            </VerticalStackLayout>
-
             <VerticalStackLayout Spacing="8">
+                <VerticalStackLayout>
+                    <Label
+                        Text="ACME Inc"
+                        FontSize="20"
+                    />
+                </VerticalStackLayout>
+
                 <Label 
                     Text="You are not in control of this device. ACME Inc is collecting highly sensitive data from this computer. They can see your search queries, read your private messages, view and control your screen, access web accounts (such as Facebook/Google), capture your passwords, and more. It is vital you only use this device for work/school related purposes (e.g do not sign into personal accounts). If this is a personal device, seek immediate help, your device is compromised and you may be in danger."
                     TextColor="DarkGrey"
@@ -24,7 +25,6 @@
 
                 <Label 
                     Text="ACME Inc is controlling your device. They can:"
-                    TextColor="DarkGrey"
                     FontSize="14"
                 />
 
@@ -32,13 +32,16 @@
                     ItemsSource="{Binding Consented}">
                     
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="6" />
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="4" />
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Label Text="{Binding .}" 
-                                LineBreakMode="WordWrap"/>
+                            <Label
+                                Text="{Binding .}"
+                                TextColor="DarkGrey"
+                                LineBreakMode="WordWrap"
+                            />
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
@@ -49,6 +52,28 @@
                     SemanticProperties.Hint="Allows user to manually compress file(s)"
                     HorizontalOptions="Start"
                     FontSize="14" 
+                />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Label 
+                    Text="Remote desktop"
+                    FontSize="15"
+                />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Label 
+                    Text="Applications installed by org"
+                    FontSize="15"
+                />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="8">
+                <Label 
+                    Text="Browsing history (dev note: for user to see as a wake up call reminder they shouldn't use personal accounts on work devices. It should be noted these aren't complete network logs.)"
+                    FontSize="15"
                 />
             </VerticalStackLayout>
         </VerticalStackLayout>

@@ -47,7 +47,6 @@ diesel::table! {
     rover_users (id) {
         id -> Text,
         email -> Text,
-        username -> Text,
         admin_permission_flags -> Nullable<BigInt>,
     }
 }
@@ -237,6 +236,53 @@ async fn users_list(db: Connection<Db>, params: &Query_string) -> Custom<Value> 
         "ok": true,
         "data": results
     }))
+}
+
+#[post("/users/post", format = "application/json", data = "<body>")]
+async fn users_post(mut db: Connection<Db>, mut body: Json<User_create_body>) -> Custom<Value> {
+    // diesel::sql_function!(fn last_insert_id() -> BigInt);
+
+    if (is_null_or_whitespace(body.first_name.clone())) {
+        return status::Custom(Status::BadRequest, error_message("body.first_name is null or whitespace."));
+    }
+    if (is_null_or_whitespace(body.last_name.clone())) {
+        return status::Custom(Status::BadRequest, error_message("body.last_name is null or whitespace."));
+    }
+    if (is_null_or_whitespace(body.email_address.clone())) {
+        return status::Custom(Status::BadRequest, error_message("body.email is null or whitespace."));
+    }
+
+    let result: Option<Rover_users> = rover_users::table
+        .filter(rover_users::email.eq(body.email.clone()))
+        .first(&mut db)
+        .await
+        .optional().expect("Something went wrong querying the DB.");
+
+    if (result.is_none() == false) {
+        return status::Custom(Status::BadRequest, error_message(&format!("'{}' is already a user. Please use a different email address.", body.email)));
+    }
+
+    let user = result.unwrap();
+
+    let user_id = generate_random_id();
+    // let number: i32 = rand::thread_rng().gen_range(0..999999);
+
+    let code_insert = Rover_users {
+        id: user_id.clone(),
+        email: body.email.clone(),
+        admin_permission_flags: None
+    };
+    diesel::insert_into(rover_users::table)
+        .values(&code_insert)
+        .execute(&mut db)
+        .await.expect("fail");
+
+    return status::Custom(Status::Ok, json!({
+        "ok": true,
+        "user_id": user_id.clone()
+    }));
+    
+    // Ok(Created::new("/").body(post))
 }
 
 #[get("/network/list")]

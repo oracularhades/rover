@@ -13,6 +13,13 @@ pub struct Login_body {
 }
 
 #[derive(Clone, Debug, Deserialize)]
+pub struct User_create_body {
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>
+}
+
+#[derive(Clone, Debug, Deserialize)]
 pub struct Authenticate_Body {
     pub attempt_id: String,
     pub code: Option<i64>,
@@ -59,7 +66,6 @@ pub struct Rover_users {
     #[serde(skip_deserializing)]
     pub id: String,
     pub email: String,
-    pub username: String,
     pub admin_permission_flags: Option<i64>,
 }
 

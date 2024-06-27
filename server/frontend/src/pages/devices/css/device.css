@@ -1,0 +1,23 @@
+.device_page {
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+}
+
+.device_topbar {
+    width: 100%;
+}
+
+.device_grid {
+    width: 100%;
+}
+
+.device_grid .backdrop_content {
+    height: 400px;
+}
+
+.view_full {
+    font-weight: bold;
+    font-size: 15px;
+    color: rgb(0, 94, 255);
+}

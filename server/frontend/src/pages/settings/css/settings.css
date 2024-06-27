@@ -1,0 +1,11 @@
+.rover_version {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    row-gap: 12px;
+    max-width: 600px;
+}

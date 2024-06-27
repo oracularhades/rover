@@ -8,6 +8,7 @@ use rocket::serde::json::json;
 use rocket::request::{self, Request, FromRequest};
 use rocket::{fairing::{Fairing, Info, Kind}, State};
 use rocket::fairing::AdHoc;
+use rocket::fs::FileServer;
 
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
@@ -29,64 +30,13 @@ use rand::prelude::*;
 use crate::global::{ send_email, generate_random_id, is_null_or_whitespace, request_authentication };
 use crate::responses::*;
 use crate::structs::*;
+use crate::tables::*;
+
 use hades_auth::*;
 
 use core::sync::atomic::{AtomicUsize, Ordering};
 
 type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
-
-diesel::table! {
-    posts (id) {
-        id -> Nullable<BigInt>,
-        title -> Text,
-        text -> Text,
-        published -> Bool,
-    }
-}
-diesel::table! {
-    rover_users (id) {
-        id -> Text,
-        email -> Text,
-        admin_permission_flags -> Nullable<BigInt>,
-    }
-}
-diesel::table! {
-    rover_network (device_id) {
-        device_id -> Text,
-        domain -> Text,
-        ip_address -> Text,
-        destination_country -> Text,
-        destination_registrant -> Text,
-        protocol -> Text,
-        size -> Nullable<BigInt>,
-        info -> Text,
-    }
-}
-diesel::table! {
-    rover_processes (device_id) {
-        device_id -> Text,
-        process -> Text,
-        last_seen ->  Nullable<BigInt>,
-        user -> Text,
-        admin_user -> Text,
-        is_admin_process -> Text,
-        PID -> Nullable<BigInt>,
-        publisher -> Text,
-        hash -> Text,
-        threads ->  Nullable<BigInt>,
-        size ->  Nullable<BigInt>,
-        pathname -> Text,
-    }
-}
-diesel::table! {
-    login_codes (code) {
-        attempt_id -> Text,
-        code -> Nullable<BigInt>,
-        created -> Nullable<BigInt>,
-        attempts -> Nullable<BigInt>,
-        user_id -> Text,
-    }
-}
 
 #[post("/login", format = "application/json", data = "<body>")]
 async fn login(mut db: Connection<Db>, mut body: Json<Login_body>) -> Custom<Value> {
@@ -215,8 +165,8 @@ async fn authenticate(mut db: Connection<Db>, mut body: Json<Authenticate_Body>)
 //     Ok(Json(results))
 // }
 
-#[get("/users/list")]
-async fn users_list(db: Connection<Db>, params: &Query_string) -> Custom<Value> {
+#[get("/user/list")]
+async fn user_list(db: Connection<Db>, params: &Query_string) -> Custom<Value> {
     let request_authentication_output: Option<Request_authentication_output> = match request_authentication(db, None, params, "/users/list", false).await {
         Ok(data) => Some(data),
         Err(e) => None
@@ -238,28 +188,30 @@ async fn users_list(db: Connection<Db>, params: &Query_string) -> Custom<Value> 
     }))
 }
 
-#[post("/users/post", format = "application/json", data = "<body>")]
-async fn users_post(mut db: Connection<Db>, mut body: Json<User_create_body>) -> Custom<Value> {
-    // diesel::sql_function!(fn last_insert_id() -> BigInt);
-
-    if (is_null_or_whitespace(body.first_name.clone())) {
+#[post("/user/post", format = "application/json", data = "<body>")]
+async fn user_post(mut db: Connection<Db>, mut body: Json<User_create_body>) -> Custom<Value> {
+    if (body.first_name.is_none() == true) {
         return status::Custom(Status::BadRequest, error_message("body.first_name is null or whitespace."));
     }
-    if (is_null_or_whitespace(body.last_name.clone())) {
+    if (body.last_name.is_none() == true) {
         return status::Custom(Status::BadRequest, error_message("body.last_name is null or whitespace."));
     }
-    if (is_null_or_whitespace(body.email_address.clone())) {
+    if (body.email.is_none() == true) {
         return status::Custom(Status::BadRequest, error_message("body.email is null or whitespace."));
     }
 
+    let first_name = body.first_name.clone().expect("missing body.first_name");
+    let last_name = body.last_name.clone().expect("missing body.last_name");
+    let email = body.email.clone().expect("missing body.email");
+
     let result: Option<Rover_users> = rover_users::table
-        .filter(rover_users::email.eq(body.email.clone()))
+        .filter(rover_users::email.eq(email.clone()))
         .first(&mut db)
         .await
         .optional().expect("Something went wrong querying the DB.");
 
     if (result.is_none() == false) {
-        return status::Custom(Status::BadRequest, error_message(&format!("'{}' is already a user. Please use a different email address.", body.email)));
+        return status::Custom(Status::BadRequest, error_message(&format!("'{}' is already a user. Please use a different email address.", email)));
     }
 
     let user = result.unwrap();
@@ -269,7 +221,7 @@ async fn users_post(mut db: Connection<Db>, mut body: Json<User_create_body>) ->
 
     let code_insert = Rover_users {
         id: user_id.clone(),
-        email: body.email.clone(),
+        email: email.clone(),
         admin_permission_flags: None
     };
     diesel::insert_into(rover_users::table)
@@ -307,8 +259,8 @@ async fn network_list(mut db: Connection<Db>, params: &Query_string) -> Custom<V
     }))
 }
 
-#[get("/processes/list")]
-async fn processes_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
+#[get("/process/list")]
+async fn process_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
     let request_authentication_output: Option<Request_authentication_output> = match request_authentication(db, None, params, "/processes/list", false).await {
         Ok(data) => Some(data),
         Err(e) => None
@@ -329,21 +281,21 @@ async fn processes_list(mut db: Connection<Db>, params: &Query_string) -> Custom
     }))
 }
 
-#[delete("/<id>")]
-async fn delete(mut db: Connection<Db>, id: i64) -> Result<Option<()>> {
-    let affected = diesel::delete(posts::table)
-        .filter(posts::id.eq(id))
-        .execute(&mut db)
-        .await?;
+// #[delete("/<id>")]
+// async fn delete(mut db: Connection<Db>, id: i64) -> Result<Option<()>> {
+//     let affected = diesel::delete(posts::table)
+//         .filter(posts::id.eq(id))
+//         .execute(&mut db)
+//         .await?;
 
-    Ok((affected == 1).then(|| ()))
-}
+//     Ok((affected == 1).then(|| ()))
+// }
 
-#[delete("/")]
-async fn destroy(mut db: Connection<Db>) -> Result<()> {
-    diesel::delete(posts::table).execute(&mut db).await?;
-    Ok(())
-}
+// #[delete("/")]
+// async fn destroy(mut db: Connection<Db>) -> Result<()> {
+//     diesel::delete(posts::table).execute(&mut db).await?;
+//     Ok(())
+// }
 
 #[options("/<_..>")]
 fn options_handler() -> &'static str {
@@ -369,9 +321,10 @@ impl<'r> FromRequest<'r> for &'r Query_string {
 }
 
 pub fn stage() -> AdHoc {
-    AdHoc::on_ignite("Diesel SQLite Stage", |rocket| async {
+    AdHoc::on_ignite("Diesel SQLite Stage", |rocket| async { // delete, destroy,
         rocket.attach(Db::init())
-        .mount("/", routes![users_list, network_list, processes_list, login, authenticate, delete, destroy, options_handler])
-        .mount("/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
+        .mount("/", FileServer::from(format!("{}/frontend/_static", env::current_dir().expect("Could not get current process directory.").display())))
+        .mount("/api", routes![user_list, network_list, process_list, login, authenticate, options_handler])
+        .mount("/api/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
     })
 }

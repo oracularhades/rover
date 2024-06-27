@@ -25,3 +25,8 @@
 
 *.exe
 /desktop-ui/target
+
+/server/admin-panel/_static
+/server/target
+node_modules
+/server/frontend/_static

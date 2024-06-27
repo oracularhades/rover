@@ -1,0 +1,57 @@
+.device_component {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 4px;
+    padding: 4px;
+    width: 100%;
+}
+
+.device_component_left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 6px;
+
+    text-align: start;
+    box-shadow: unset;
+    padding: 0px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.device_component_icon {
+    width: 25px;
+    height: 25px;
+}
+
+.device_component_metadata {
+    display: flex;
+    flex-direction: column;
+}
+
+.device_component_metadata_alias {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.device_component_metadata_device_type {
+    font-size: 12px;
+}
+
+.device_component_right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 4px;
+}
+
+.right_button {
+    padding: 4px;
+}
+
+.right_button img {
+    width: 20px;
+    height: 20px;
+}

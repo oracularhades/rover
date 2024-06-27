@@ -1,7 +1,7 @@
 use rocket::serde::{Serialize, Deserialize};
 use diesel::prelude::*;
 use diesel::sql_types::*;
-use crate::diesel_mysql::*;
+use crate::tables::*;
 use crate::device::*;
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
@@ -140,4 +140,31 @@ pub struct Request_authentication_output {
     // #[derive(Clone, Debug, Deserialize)]
     pub user_id: String,
     pub device_id: String
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_sql {
+    pub users_table: Option<String>,
+    pub devices_table: Option<String>,
+    pub magiclink_table: Option<String>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_database_mysql {
+    pub username: Option<String>,
+    pub password_env: Option<String>,
+    pub hostname: Option<String>,
+    pub port: Option<i64>,
+    pub database: Option<String>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_smtp {
+    pub host: Option<String>,
+    pub port: Option<i64>,
+    pub username: Option<String>,
+    pub from_alias: Option<String>,
+    pub from_header: Option<String>,
+    pub reply_to_address: Option<String>,
+    pub password_env: Option<String>
 }

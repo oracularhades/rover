@@ -6,6 +6,7 @@ use rocket::http::Status;
 use rocket::response::status::Custom;
 use rocket::serde::json::Value;
 use rocket::serde::json::json;
+use rocket::serde::json::serde_json;
 
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
@@ -25,9 +26,9 @@ use rand::prelude::*;
 use crate::global::{ send_email, generate_random_id, is_null_or_whitespace, request_authentication };
 use crate::responses::*;
 use crate::structs::*;
+use crate::tables::*;
+
 use hades_auth::*;
-use crate::diesel_mysql::*;
-use rocket::serde::json::serde_json;
 
 type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 

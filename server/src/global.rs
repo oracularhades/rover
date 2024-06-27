@@ -1,51 +1,75 @@
 use std::process::{Command, Stdio};
 use std::error::Error;
 use std::collections::HashMap;
-
 use std::fs::{File};
 use std::io::Write;
-use url::Url;
+use std::env;
 
+use url::Url;
 use rand::prelude::*;
 
+use crate::CONFIG_VALUE;
 use crate::structs::*;
 use crate::device::*;
+
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
 
+use lettre::message::header::ContentType;
+use lettre::transport::smtp::authentication::Credentials;
+use lettre::{Message, SmtpTransport, Transport};
+
 use hades_auth::authenticate;
 
-pub async fn send_email(email: String, subject: String, message: String) {
-    println!("going");
-    let mut file = File::create("/tmp/test.txt").expect("Something went wrong creating the file.");
-    file.write_all(format!("Subject: {}\nheaders:\n  From: noreply@paperplane.motionfans.com\n  Subject: {}\n\n{}", subject, subject, message).as_bytes());
+pub async fn send_email(email: String, subject: String, message: String) -> Result<bool, Box<dyn Error>> {
+    // Set limit on email characters, in-case someone wants to have a laugh. 500 is very generous.
+    if (email.len() > 500) {
+        return Err("The email provided is over 500 characters.".into());
+    }
 
-    // Create a Command to execute the echo command
-    let echo_command = Command::new("cat")
-        .arg("/tmp/test.txt")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute echo command");
+    let smtp_json = serde_json::to_string(&CONFIG_VALUE["smtp"]).expect("Failed to serialize");
+    let smtp: Config_smtp = serde_json::from_str(&smtp_json).expect("Failed to parse");
 
-    // Use output of echo as input for msmtp command
-    let mut msmtp_command = Command::new("msmtp")
-        .args(&["-f", "noreply@paperplane.motionfans.com", &email])
-        .stdin(Stdio::from(echo_command.stdout.expect("Failed to get echo stdout")))
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("Failed to execute msmtp command");
+    // NOTE: We're not stupid, Lettre validates the input here via .parse. It's absolutely vital .parse is here for safety.
 
-    // Wait for the msmtp command to finish and get its exit status
-    let status = msmtp_command
-        .wait()
-        .expect("Failed to wait for msmtp command");
+    let from = format!("{} <{}>", smtp.from_alias.expect("Missing from_alias"), smtp.from_header.clone().expect("Missing from_header"));
+    let mut reply_to = format!("<{}>", smtp.from_header.expect("Missing from_header"));
+    let to = format!("<{}>", email);
 
-    if !status.success() {
-        eprintln!("Error: Command execution failed");
-        // Optionally, you can handle the error further
+    if (smtp.reply_to_address.is_none() == false) {
+        reply_to = format!("<{}>", smtp.reply_to_address.expect("Missing reply_to_address"));
+    }
+
+    // NOTE: IT IS ABSOLUTELY VITAL .PARSE IS HERE, ON ALL INPUTS, FOR SAFETY. Lettre validates the input here via .parse, injection is possible without .parse.
+    let mut email_packet = Message::builder()
+    .from(from.parse().unwrap())
+    .reply_to(reply_to.parse().unwrap())
+    .to(to.parse().unwrap())
+    .subject(subject)
+    .header(ContentType::TEXT_PLAIN)
+    .body(String::from(message))
+    .unwrap();
+
+    // Check for password and get it.
+    let mut password: String = String::new();
+    if let Some(val) = env::var(smtp.password_env.expect("Missing password_env")).ok() {
+        password = val;
     } else {
-        println!("Command executed successfully");
+        return Err("The environment variable specified in config.smtp.password_env is missing.".into());
+    }
+
+    let creds = Credentials::new(smtp.username.expect("Missing username"), password);
+
+    // Open a remote connection to SMTP server
+    let mailer = SmtpTransport::relay(&smtp.host.expect("Missing host"))
+        .unwrap()
+        .credentials(creds)
+        .build();
+
+    // Send the email
+    match mailer.send(&email_packet) {
+        Ok(_) => Ok(true),
+        Err(e) => Err("Could not send email: {e:?}".into()),
     }
 }
 

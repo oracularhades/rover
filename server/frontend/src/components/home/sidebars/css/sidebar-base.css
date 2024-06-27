@@ -1,0 +1,4 @@
+.sidebar_base {
+    display: flex;
+    flex-direction: column;
+}

@@ -6,23 +6,18 @@ publish = false
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["json"] }
-diesel = { version = "2", features = ["returning_clauses_for_sqlite_3_35"] }
-diesel_migrations = "2"
 rand = "0.8.5"
 serde = "1.0.196"
 hades_auth = { version = "0.1.3", path = "crates/rust" }
 url = "2.5.0"
 hex-literal = "0.4.1"
-
-[dependencies.sqlx]
-version = "0.7.0"
-default-features = false
-features = ["macros", "migrate"]
+lettre = "0.11.7"
+regex = "1.10.5"
+once_cell = "1.19.0"
+serde_json = "1.0.117"
+toml = "0.8.14"
+diesel = { version = "2", features = ["returning_clauses_for_sqlite_3_35"] }
 
 [dependencies.rocket_db_pools]
 version = "0.2.0"
-features = ["sqlx_sqlite", "diesel_mysql"]
-
-[dependencies.rocket_sync_db_pools]
-version = "0.1.0"
-features = ["diesel_sqlite_pool", "sqlite_pool"]
+features = ["diesel_mysql"]

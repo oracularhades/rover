@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./your-directory
+        working-directory: ./server
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:

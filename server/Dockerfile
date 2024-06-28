@@ -126,6 +126,6 @@ RUN chown -R kube /var/log/nginx
 RUN chmod +x /rover-server/guard/guard-server
 RUN chmod +x /rover-server/start-webservers.sh
 
-# Run the application as kube user
+# Run the application as kube user.
 USER kube
 CMD export guard_config=$(cat /rover-server/guard/guard-config.toml) & /rover-server/start-webservers.sh

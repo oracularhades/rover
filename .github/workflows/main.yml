@@ -12,10 +12,6 @@ on:
       - '.github/workflows/**'
       - '**'
 
-defaults:
- run:
-  working-directory: ./server
-
 jobs:
   build:
     runs-on: ubuntu-latest

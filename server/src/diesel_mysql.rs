@@ -324,7 +324,7 @@ pub fn stage() -> AdHoc {
     AdHoc::on_ignite("Diesel SQLite Stage", |rocket| async { // delete, destroy,
         rocket.attach(Db::init())
         .mount("/", FileServer::from(format!("{}/frontend/_static", env::current_dir().expect("Could not get current process directory.").display())))
-        .mount("/api", routes![user_list, network_list, process_list, login, authenticate, options_handler])
-        .mount("/api/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
+        // .mount("/api", routes![user_list, network_list, process_list, login, authenticate, options_handler])
+        // .mount("/api/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
     })
 }

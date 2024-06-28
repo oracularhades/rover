@@ -12,6 +12,10 @@ on:
       - '.github/workflows/**'
       - '**'
 
+defaults:
+ run:
+  working-directory: ./server
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -36,7 +40,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: .
+        context: ./server
         push: true
         tags: |
           ghcr.io/${{ github.repository }}:latest

@@ -7,10 +7,8 @@ on:
     branches:
       - main
     paths:
-      - 'Dockerfile'
-      - 'src/**'
-      - '.github/workflows/**'
-      - '**'
+      - 'server/**'
+      # - '.github/workflows/**'
 
 jobs:
   build:

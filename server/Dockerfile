@@ -47,13 +47,11 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 RUN brew install node
 
-USER root
 # Build front-end
 WORKDIR /rover-server/frontend
 RUN npm install
 RUN npm run build
 WORKDIR /rover-server
-USER linuxbrew
 
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 

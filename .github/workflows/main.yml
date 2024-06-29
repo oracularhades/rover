@@ -5,10 +5,12 @@ on:
   # Triggers the workflow on push request on the main branch for changes in the specified paths.
   push:
     branches:
-      - actions
+      - main
     paths:
-      - 'server/**'
+      - 'Dockerfile'
+      - 'src/**'
       - '.github/workflows/**'
+      - '**'
 
 jobs:
   build:
@@ -16,6 +18,10 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
+    - name: Checkout master
+      uses: actions/checkout@main
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -30,8 +36,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
+        context: .
         push: true
-        context: "{{defaultContext}}"
-        file: ./server/Dockerfile
         tags: |
           ghcr.io/${{ github.repository }}:latest

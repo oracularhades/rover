@@ -56,12 +56,13 @@ ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 
 RUN curl -Lo /rover/server/guard.zip https://github.com/oracularhades/guard/releases/download/latest/guard.zip
 RUN unzip -d /rover/server /rover/server/guard.zip
-# RUN chmod +x /rover-server/guard/rover-server
+RUN chmod +x /rover/server/guard/guard-server
 
 # Build
 RUN cargo build --release
 
 # Remove frontend nextjs source files, they just un-necessarily take up lots of space.
+RUN mkdir /rover-server-built/guard
 RUN mkdir /rover-server-built/frontend
 RUN mv /rover/server/frontend/_static /rover-server-built/frontend/_static
 RUN mv /rover/server/target /rover-server-built/target
@@ -75,8 +76,8 @@ RUN mv /rover/server/Rocket.toml /rover-server-built/Rocket.toml
 # This is about to get moved with the /rover/server/guard folder to /rover-server-built/guard, so we have no need to move it here.
 COPY ./server/guard/Rocket.toml /rover/server/guard/Rocket.toml
 
-COPY ./server/guard/guard-config.toml /rover-server/guard/guard-config.toml
-RUN mv /rover/server/guard /rover-server-built/guard
+COPY ./server/guard/guard-config.toml /rover/server/guard/guard-config.toml
+RUN mv /rover/server/guard /rover-server-built
 
 WORKDIR /
 USER root
@@ -86,7 +87,7 @@ USER linuxbrew
 FROM --platform=linux/amd64 rust:latest as production-stage
 WORKDIR /rover/server
 
-COPY --from=build-stage /rover-server-built /rover-server
+COPY --from=build-stage /rover-server-built /rover/server
 
 # Install libcap2-bin for setting capabilities
 RUN apt update

@@ -49,8 +49,8 @@ RUN brew install node
 
 # Build front-end
 WORKDIR /rover-server/frontend
-RUN npm install
-RUN npm run build
+# RUN npm install
+# RUN npm run build
 WORKDIR /rover-server
 
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
@@ -110,7 +110,7 @@ RUN usermod -s /bin/rbash kube
 # RUN chown -R kube /home/kube/.msmtp-password.gpg
 
 # Expose port 80 for the web server
-EXPOSE 8000
+EXPOSE 80
 
 # Remove libcap2-bin and clean up apt cache
 RUN apt remove -y libcap2-bin

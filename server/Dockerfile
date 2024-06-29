@@ -36,7 +36,7 @@ RUN chown -R linuxbrew /rover-server-built
 RUN chown -R linuxbrew /rover-server
 RUN chown -R linuxbrew /rover-server/frontend
 
-# Switch to the non-root user
+# Switch to the non-root user.
 USER linuxbrew
 # Set environment variables for Homebrew
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"

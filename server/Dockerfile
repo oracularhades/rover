@@ -48,14 +48,14 @@ RUN brew install node
 
 # Build front-end
 WORKDIR /rover/server/frontend
-RUN npm install
-RUN npm run build
+# RUN npm install
+# RUN npm run build
 WORKDIR /rover/server
 
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 
 RUN curl -Lo /rover/server/guard.zip https://github.com/oracularhades/guard/releases/download/latest/guard.zip
-RUN unzip -d /rover/server /rover-server/guard.zip
+RUN unzip -d /rover/server /rover/serverserver/guard.zip
 # RUN chmod +x /rover-server/guard/rover-server
 
 # Build

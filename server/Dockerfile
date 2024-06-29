@@ -48,8 +48,8 @@ RUN brew install node
 
 # Build front-end
 WORKDIR /rover/server/frontend
-# RUN npm install
-# RUN npm run build
+RUN npm install
+RUN npm run build
 WORKDIR /rover/server
 
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"

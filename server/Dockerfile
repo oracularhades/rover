@@ -95,9 +95,6 @@ COPY --from=build-stage /rover-server /rover-server
 RUN apt update
 RUN apt install -y libcap2-bin default-mysql-client dnsutils
 
-# Set the capability to bind to port 80 for the cargo binary
-RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx
-
 # Add a non-root user kube with restricted shell
 RUN adduser kube --disabled-login
 RUN usermod -s /bin/rbash kube
@@ -123,6 +120,9 @@ RUN chown -R kube /var/log/nginx
 
 RUN chmod +x /rover-server/guard/guard-server
 RUN chmod +x /rover-server/start-webservers.sh
+
+# Set the capability to bind to port 80 for the cargo binary
+RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx
 
 # Run the application as kube user
 USER kube

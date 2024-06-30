@@ -34,4 +34,19 @@ function to_table(data) {
     return table_export;
 }
 
-export { to_table };
+async function redirect_to_login_if_required() {
+    if (!await localStorage.getItem("auth")) {
+        let host = window.location.hostname;
+        if (window.location.port != 443 && window.location.port != 80) {
+            host = `${host}:${window.location.port}`;
+        }
+        
+        let params = new URLSearchParams({
+            redirect: `${window.location.protocol}//${host}`
+        });
+
+        window.location.href = `/guard/frontend/login?${params.toString()}`;
+    }
+}
+
+export { to_table, redirect_to_login_if_required };

@@ -154,7 +154,7 @@ pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>
         params_object,
         &jwt,
         &public_key,
-        &format!("api/{}", pathname),
+        &format!("/api{}", pathname),
         false
     ).await.expect("Authentication failed");
 

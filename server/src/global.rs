@@ -151,7 +151,7 @@ pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>
 
     authenticate(
         body,
-        params_object,
+        serde_json::to_value(params_object).unwrap(),
         &jwt,
         &public_key,
         &format!("/api{}", pathname),

@@ -165,7 +165,7 @@ async fn authenticate(mut db: Connection<Db>, mut body: Json<Authenticate_Body>)
 
 #[get("/user/list")]
 async fn user_list(db: Connection<Db>, params: &Query_string) -> Custom<Value> {
-    let request_authentication_output: Option<Request_authentication_output> = match request_authentication(db, None, params, "/users/list", false).await {
+    let request_authentication_output: Option<Request_authentication_output> = match request_authentication(db, None, params, "/user/list", false).await {
         Ok(data) => Some(data),
         Err(e) => None
     };

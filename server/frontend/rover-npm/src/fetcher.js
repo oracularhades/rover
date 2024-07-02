@@ -14,9 +14,11 @@ async function fetch_wrapper(url, properties) {
     }
 
     let response = null;
-    if (credsStatus && credsStatus.deviceid) {
-        response = await fetch_wrapper_hades(url, properties, credsStatus.deviceid, credsStatus.privatekey);   
+    if (credsStatus && credsStatus.device_id) {
+        console.log("AUTHENTICATED");
+        response = await fetch_wrapper_hades(url, properties, credsStatus.device_id, credsStatus.private_key);   
     } else {
+        console.log("NOT AUTHENTICATED");
         response = await fetch(url, properties);
     }
 

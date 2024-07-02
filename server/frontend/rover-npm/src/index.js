@@ -1,7 +1,6 @@
 import fetch_wrapper from "./fetcher.js";
 import general from "./general.js";
 import auth from './lib.js';
-import oauth from "./protocols/oauth.js";
 import user from "./user.js";
 import network from "./network.js";
 import process from "./process.js";
@@ -16,8 +15,8 @@ async function getCreds() {
     const pemFooter = "-----END PRIVATE KEY-----";
 
     return {
-        deviceid: deviceIDG,
-        privatekey: pemHeader+privateKeyG+pemFooter,
+        device_id: deviceIDG,
+        private_key: pemHeader+privateKeyG+pemFooter,
         additional_data: additional_data,
         type: typeG
     };
@@ -25,8 +24,9 @@ async function getCreds() {
 
 function Rover(credsObject) {
     if (credsObject) {
-        deviceIDG = credsObject.deviceid;
-        privateKeyG = credsObject.privatekey;
+        console.log("CREDS");
+        deviceIDG = credsObject.device_id;
+        privateKeyG = credsObject.private_key;
         additional_data = credsObject.additional_data;
         typeG = credsObject.type;
     } else {
@@ -34,9 +34,7 @@ function Rover(credsObject) {
     }
 
     return {
-        metadata: metadata,
         auth: auth,
-        oauth: oauth,
         fetch_wrapper: fetch_wrapper,
         general: general,
         user: user,

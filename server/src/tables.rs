@@ -1,3 +1,10 @@
+use rocket::serde::{Serialize, Deserialize};
+use diesel::prelude::*;
+use diesel::sql_types::*;
+use crate::structs::*;
+use rocket_db_pools::{Database, Connection};
+use rocket_db_pools::diesel::{MysqlPool, prelude::*};
+
 diesel::table! {
     posts (id) {
         id -> Nullable<BigInt>,
@@ -48,5 +55,19 @@ diesel::table! {
         created -> Nullable<BigInt>,
         attempts -> Nullable<BigInt>,
         user_id -> Text,
+    }
+}
+
+diesel::table! {
+    rover_devices (id) {
+        id -> Text,
+        user_id -> Text,
+        public_key -> Text,
+        created -> Nullable<BigInt>,
+        active -> Nullable<Bool>,
+        compliant -> Nullable<Bool>,
+        os_type -> Nullable<Text>,
+        os_version -> Nullable<Text>,
+        alias -> Nullable<Text>
     }
 }

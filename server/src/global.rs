@@ -5,12 +5,12 @@ use std::fs::{File};
 use std::io::Write;
 use std::env;
 
-use url::Url;
-use rand::prelude::*;
-
 use crate::CONFIG_VALUE;
 use crate::structs::*;
-use crate::device::*;
+use crate::tables::*;
+
+use url::Url;
+use rand::prelude::*;
 
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
@@ -154,7 +154,7 @@ pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>
         params_object,
         &jwt,
         &public_key,
-        pathname,
+        &format!("api/{}", pathname),
         false
     ).await.expect("Authentication failed");
 

@@ -36,8 +36,6 @@ use hades_auth::*;
 
 use core::sync::atomic::{AtomicUsize, Ordering};
 
-type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
-
 #[post("/login", format = "application/json", data = "<body>")]
 async fn login(mut db: Connection<Db>, mut body: Json<Login_body>) -> Custom<Value> {
     // diesel::sql_function!(fn last_insert_id() -> BigInt);
@@ -121,20 +119,20 @@ async fn authenticate(mut db: Connection<Db>, mut body: Json<Authenticate_Body>)
     let device_insert = Rover_devices {
         id: device_id.clone(),
         user_id: login_attempt_data.user_id.clone(),
-        location: "admin_panel".to_string(),
+        // location: "admin_panel".to_string(),
         public_key: body.public_key.clone(),
         created: Some(TryInto::<i64>::try_into(SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("Failed to get duration since unix epoch")
         .as_millis()).expect("Failed to get timestamp")),
-        active: true,
-        alias: "".to_string(),
-        compliant: false,
-        os_type: "".to_string(),
-        os_version: "".to_string()
+        active: Some(true),
+        compliant: Some(false),
+        alias:  Some("".to_string()),
+        os_type:  Some("".to_string()),
+        os_version: Some("".to_string())
     };
 
-    diesel::insert_into(crate::device::rover_devices::table)
+    diesel::insert_into(rover_devices::table)
         .values(&device_insert)
         .execute(&mut db)
         .await.expect("fail");
@@ -321,10 +319,10 @@ impl<'r> FromRequest<'r> for &'r Query_string {
 }
 
 pub fn stage() -> AdHoc {
-    AdHoc::on_ignite("Diesel SQLite Stage", |rocket| async { // delete, destroy,
+    AdHoc::on_ignite("Diesel SQLite Stage", |rocket| async {
         rocket.attach(Db::init())
         .mount("/", FileServer::from(format!("{}/frontend/_static", env::current_dir().expect("Could not get current process directory.").display())))
-        // .mount("/api", routes![user_list, network_list, process_list, login, authenticate, options_handler])
+        .mount("/api", routes![user_list, network_list, process_list, options_handler])
         // .mount("/api/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
     })
 }

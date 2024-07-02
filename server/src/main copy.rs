@@ -35,7 +35,7 @@ use toml::Value;
 
 use crate::responses::*;
 use crate::structs::*;
-use crate::database::{ validate_sql_table_inputs };
+use crate::database::{ validate_sql_table_inputs, check_database_environment };
 
 // type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
@@ -121,15 +121,12 @@ fn internal_error() -> serde_json::Value {
 async fn rocket() -> _ {
     let (unsafe_do_not_use_sql_tables, unsafe_do_not_use_raw_sql_tables) = get_sql_tables().unwrap();
     validate_sql_table_inputs(unsafe_do_not_use_raw_sql_tables).await.expect("Config validation failed.");
+    check_database_environment().await.expect("Check database environment failed.");
 
-    println!("hm {}", database::get_default_database_url().await);
-    let figment = rocket::Config::figment()
-        .merge(("databases.diesel_mysql.url", database::get_default_database_url().await));
-
-    rocket::custom(figment)
-        .attach(Cors)
-        .attach(diesel_mysql::stage())
-        .register("/", catchers![internal_error])
+    rocket::build()
+    .register("/", catchers![internal_error])
+    // .attach(Cors)
+    .attach(diesel_mysql::stage())
 }
 
 #[rocket::async_trait]

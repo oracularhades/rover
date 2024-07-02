@@ -1,9 +1,10 @@
-import general from "../general.js";
-import { Rover, getCreds } from "../index.js";
-import { getRoverApiURL } from "../routing.js";
+import general from "./general.js";
+import { Rover, getCreds } from "./index.js";
+import { getRoverApiURL } from "./routing.js";
 
 async function list() {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/list?${general().objectToParams({ host, authentication_method, code })}`, {
+    console.log("CREDS OVER HERE", await getCreds());
+    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/list`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
@@ -12,16 +13,15 @@ async function list() {
         referrerPolicy: 'no-referrer'
     })
     
-    const data = response.json();
-
-    if (data.error == true) {
-        throw data;
+    const response_data = response.json();
+    if (response_data.error == true) {
+        throw response_data;
     }
     
-    return data;
+    return response_data;
 }
 
-async function get(data) {
+async function get(id) {
     const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/get?${general().objectToParams({ id })}`, {
         method: 'GET',
         mode: 'cors',
@@ -31,13 +31,12 @@ async function get(data) {
         referrerPolicy: 'no-referrer'
     })
     
-    const data = response.json();
-
-    if (data.error == true) {
-        throw data;
+    const response_data = response.json();
+    if (response_data.error == true) {
+        throw response_data;
     }
     
-    return data;
+    return response_data;
 }
 
 async function create(data) {
@@ -56,13 +55,12 @@ async function update(data) {
         body: JSON.stringify(data)
     })
     
-    const data = response.json();
-
-    if (data.error == true) {
-        throw data;
+    const response_data = response.json();
+    if (response_data.error == true) {
+        throw response_data;
     }
     
-    return data;
+    return response_data;
 }
 
 const user = { list, get, create, update };

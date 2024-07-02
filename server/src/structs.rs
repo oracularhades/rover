@@ -1,10 +1,11 @@
 use rocket::serde::{Serialize, Deserialize};
-use diesel::prelude::*;
-use diesel::sql_types::*;
 use crate::tables::*;
-use crate::device::*;
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
+
+#[derive(Database)]
+#[database("diesel_mysql")]
+pub struct Db(MysqlPool);
 
 // Incoming body structs
 #[derive(Clone, Debug, Deserialize)]
@@ -43,9 +44,43 @@ pub struct Device_startup_struct {
 }
 
 // Table structs
-#[derive(Database)]
-#[database("diesel_mysql")]
-pub struct Db(MysqlPool);
+// Internal structs
+#[derive(Debug)]
+pub struct Query_string(pub String);
+
+pub struct Request_authentication_output {
+    pub returned_connection: Connection<Db>,
+    // #[derive(Clone, Debug, Deserialize)]
+    pub user_id: String,
+    pub device_id: String
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_sql {
+    pub users_table: Option<String>,
+    pub devices_table: Option<String>,
+    pub magiclink_table: Option<String>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_database_mysql {
+    pub username: Option<String>,
+    pub password_env: Option<String>,
+    pub hostname: Option<String>,
+    pub port: Option<i64>,
+    pub database: Option<String>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Config_smtp {
+    pub host: Option<String>,
+    pub port: Option<i64>,
+    pub username: Option<String>,
+    pub from_alias: Option<String>,
+    pub from_header: Option<String>,
+    pub reply_to_address: Option<String>,
+    pub password_env: Option<String>
+}
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
 #[serde(crate = "rocket::serde")]
@@ -76,14 +111,13 @@ pub struct Rover_devices {
     // #[serde(skip_deserializing)]
     pub id: String,
     pub user_id: String,
-    pub location: String,
     pub public_key: String,
     pub created: Option<i64>,
-    pub active: bool,
-    pub os_type: String,
-    pub os_version: String,
-    pub alias: String,
-    pub compliant: bool,
+    pub active: Option<bool>,
+    pub compliant: Option<bool>,
+    pub os_type: Option<String>,
+    pub os_version: Option<String>,
+    pub alias: Option<String>
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
@@ -129,42 +163,4 @@ pub struct Login_code_record {
     pub created: Option<i64>,
     pub attempts: Option<i64>,
     pub user_id: String,
-}
-
-// Internal structs
-#[derive(Debug)]
-pub struct Query_string(pub String);
-
-pub struct Request_authentication_output {
-    pub returned_connection: Connection<Db>,
-    // #[derive(Clone, Debug, Deserialize)]
-    pub user_id: String,
-    pub device_id: String
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Config_sql {
-    pub users_table: Option<String>,
-    pub devices_table: Option<String>,
-    pub magiclink_table: Option<String>
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Config_database_mysql {
-    pub username: Option<String>,
-    pub password_env: Option<String>,
-    pub hostname: Option<String>,
-    pub port: Option<i64>,
-    pub database: Option<String>
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Config_smtp {
-    pub host: Option<String>,
-    pub port: Option<i64>,
-    pub username: Option<String>,
-    pub from_alias: Option<String>,
-    pub from_header: Option<String>,
-    pub reply_to_address: Option<String>,
-    pub password_env: Option<String>
 }

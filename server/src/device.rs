@@ -30,23 +30,6 @@ use crate::tables::*;
 
 use hades_auth::*;
 
-type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
-
-diesel::table! {
-    rover_devices (id) {
-        id -> Text,
-        user_id -> Text,
-        location -> Text,
-        public_key -> Text,
-        created -> Nullable<BigInt>,
-        active -> Bool,
-        os_type -> Text,
-        os_version -> Text,
-        alias -> Text,
-        compliant -> Bool,
-    }
-}
-
 #[get("/list")]
 pub async fn device_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
     println!("device params: {:?}", params);
@@ -59,7 +42,7 @@ pub async fn device_list(mut db: Connection<Db>, params: &Query_string) -> Custo
     }
 
     let results = rover_devices::table
-        .filter(rover_devices::location.eq("onboard_client"))
+        // .filter(rover_devices::location.eq("onboard_client"))
         .select(Rover_devices::as_select())
         .load(&mut request_authentication_output.unwrap().returned_connection)
         .await.expect("Query failed");

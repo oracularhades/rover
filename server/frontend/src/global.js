@@ -49,4 +49,9 @@ async function redirect_to_login_if_required() {
     }
 }
 
-export { to_table, redirect_to_login_if_required };
+function creds() {
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    return auth;
+}
+
+export { to_table, redirect_to_login_if_required, creds };

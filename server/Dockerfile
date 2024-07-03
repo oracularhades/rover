@@ -15,7 +15,6 @@ COPY Cargo.toml /rover-server/Cargo.toml
 COPY README.md /rover-server/README.md
 COPY src /rover-server/src
 COPY frontend /rover-server/frontend
-COPY crates /rover-server/crates
 COPY nginx /rover-server/nginx
 COPY start-webservers.sh /rover-server
 

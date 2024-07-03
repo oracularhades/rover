@@ -27,6 +27,9 @@ export default function UserCreate1(props) {
         }
 
         if (props.on_success) {
+            set_first_name(null);
+            set_last_name(null);
+            set_email(null);
             props.on_success();
         }
     }

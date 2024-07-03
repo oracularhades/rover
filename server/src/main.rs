@@ -5,7 +5,6 @@
 pub struct Cors;
 
 mod diesel_mysql;
-mod device;
 mod global;
 mod structs;
 mod responses;
@@ -14,6 +13,13 @@ mod database;
 
 pub mod globals {
     pub mod environment_variables;
+}
+
+pub mod endpoint {
+    pub mod device;
+    pub mod network;
+    pub mod process;
+    pub mod user;
 }
 
 // use diesel::r2d2;

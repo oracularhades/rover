@@ -21,58 +21,6 @@ use lettre::{Message, SmtpTransport, Transport};
 
 use hades_auth::authenticate;
 
-pub async fn send_email(email: String, subject: String, message: String) -> Result<bool, Box<dyn Error>> {
-    // Set limit on email characters, in-case someone wants to have a laugh. 500 is very generous.
-    if (email.len() > 500) {
-        return Err("The email provided is over 500 characters.".into());
-    }
-
-    let smtp_json = serde_json::to_string(&CONFIG_VALUE["smtp"]).expect("Failed to serialize");
-    let smtp: Config_smtp = serde_json::from_str(&smtp_json).expect("Failed to parse");
-
-    // NOTE: We're not stupid, Lettre validates the input here via .parse. It's absolutely vital .parse is here for safety.
-
-    let from = format!("{} <{}>", smtp.from_alias.expect("Missing from_alias"), smtp.from_header.clone().expect("Missing from_header"));
-    let mut reply_to = format!("<{}>", smtp.from_header.expect("Missing from_header"));
-    let to = format!("<{}>", email);
-
-    if (smtp.reply_to_address.is_none() == false) {
-        reply_to = format!("<{}>", smtp.reply_to_address.expect("Missing reply_to_address"));
-    }
-
-    // NOTE: IT IS ABSOLUTELY VITAL .PARSE IS HERE, ON ALL INPUTS, FOR SAFETY. Lettre validates the input here via .parse, injection is possible without .parse.
-    let mut email_packet = Message::builder()
-    .from(from.parse().unwrap())
-    .reply_to(reply_to.parse().unwrap())
-    .to(to.parse().unwrap())
-    .subject(subject)
-    .header(ContentType::TEXT_PLAIN)
-    .body(String::from(message))
-    .unwrap();
-
-    // Check for password and get it.
-    let mut password: String = String::new();
-    if let Some(val) = env::var(smtp.password_env.expect("Missing password_env")).ok() {
-        password = val;
-    } else {
-        return Err("The environment variable specified in config.smtp.password_env is missing.".into());
-    }
-
-    let creds = Credentials::new(smtp.username.expect("Missing username"), password);
-
-    // Open a remote connection to SMTP server
-    let mailer = SmtpTransport::relay(&smtp.host.expect("Missing host"))
-        .unwrap()
-        .credentials(creds)
-        .build();
-
-    // Send the email
-    match mailer.send(&email_packet) {
-        Ok(_) => Ok(true),
-        Err(e) => Err("Could not send email: {e:?}".into()),
-    }
-}
-
 pub fn generate_random_id() -> String {
     let mut random_string = String::new();
     const CHARACTERS: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ";

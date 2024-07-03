@@ -43,10 +43,11 @@ pub struct Device_startup_struct {
     pub rover_permissions: Vec<String>
 }
 
-// Table structs
 // Internal structs
 #[derive(Debug)]
 pub struct Query_string(pub String);
+
+pub struct Request_authentication(pub Option<Request_authentication_output>);
 
 pub struct Request_authentication_output {
     pub returned_connection: Connection<Db>,

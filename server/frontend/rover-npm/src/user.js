@@ -3,7 +3,6 @@ import { Rover, getCreds } from "./index.js";
 import { getRoverApiURL } from "./routing.js";
 
 async function list() {
-    console.log("CREDS OVER HERE", await getCreds());
     const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/list`, {
         method: 'GET',
         mode: 'cors',
@@ -45,13 +44,16 @@ async function create(data) {
 }
 
 async function update(data) {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/update?${general().objectToParams({ id })}`, {
+    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/update?${general().objectToParams({ id: data.id })}`, {
         method: 'POST',
         mode: 'cors',
         cache: 'default',
         credentials: 'same-origin',
         edirect: 'error',
         referrerPolicy: 'no-referrer',
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(data)
     })
     

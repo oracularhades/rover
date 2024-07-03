@@ -11,3 +11,9 @@
 .align_items_center {
     align-items: center;
 }
+
+.error_text {
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+}

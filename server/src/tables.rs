@@ -16,10 +16,27 @@ diesel::table! {
 diesel::table! {
     rover_users (id) {
         id -> Text,
-        email -> Text,
-        admin_permission_flags -> Nullable<BigInt>,
+        first_name -> Nullable<Text>,
+        last_name -> Nullable<Text>,
+        email -> Nullable<Text>,
+        permission -> Nullable<BigInt>,
     }
 }
+
+diesel::table! {
+    rover_devices (id) {
+        id -> Text,
+        user_id -> Text,
+        public_key -> Text,
+        created -> Nullable<BigInt>,
+        active -> Nullable<Bool>,
+        compliant -> Nullable<Bool>,
+        os_type -> Nullable<Text>,
+        os_version -> Nullable<Text>,
+        alias -> Nullable<Text>
+    }
+}
+
 diesel::table! {
     rover_network (device_id) {
         device_id -> Text,
@@ -55,19 +72,5 @@ diesel::table! {
         created -> Nullable<BigInt>,
         attempts -> Nullable<BigInt>,
         user_id -> Text,
-    }
-}
-
-diesel::table! {
-    rover_devices (id) {
-        id -> Text,
-        user_id -> Text,
-        public_key -> Text,
-        created -> Nullable<BigInt>,
-        active -> Nullable<Bool>,
-        compliant -> Nullable<Bool>,
-        os_type -> Nullable<Text>,
-        os_version -> Nullable<Text>,
-        alias -> Nullable<Text>
     }
 }

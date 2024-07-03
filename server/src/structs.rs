@@ -1,3 +1,4 @@
+use diesel::sql_types::BigInt;
 use rocket::serde::{Serialize, Deserialize};
 use crate::tables::*;
 use rocket_db_pools::{Database, Connection};
@@ -14,10 +15,13 @@ pub struct Login_body {
 }
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct User_create_body {
+pub struct User_update_body {
+    pub action: Option<String>,
+    pub id: Option<String>,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
-    pub email: Option<String>
+    pub email: Option<String>,
+    pub permission: Option<i64>
 }
 
 #[derive(Clone, Debug, Deserialize)]
@@ -101,8 +105,10 @@ pub struct Post {
 pub struct Rover_users {
     #[serde(skip_deserializing)]
     pub id: String,
-    pub email: String,
-    pub admin_permission_flags: Option<i64>,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+    pub permission: Option<i64>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]

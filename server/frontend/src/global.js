@@ -19,7 +19,11 @@ function to_table(data) {
                 table_export[key] = [];
             }
 
-            table_export[key].push(data[key]);
+            if (data[key]) {
+                table_export[key].push(data[key]);
+            } else {
+                table_export[key].push("data[key]");
+            }
         })
 
         not_found_keys.forEach((key) => {
@@ -27,7 +31,7 @@ function to_table(data) {
                 table_export[key] = [];
             }
             
-            table_export[key].push(null);
+            table_export[key].push("null");
         });
     });
 

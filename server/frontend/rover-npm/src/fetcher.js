@@ -13,6 +13,20 @@ async function fetch_wrapper(url, properties) {
         url = new_url_obj.href;
     }
 
+    // // We need to set a content-type for the server.
+    // if (properties.body) {
+    //     try {
+    //         JSON.parse(properties.body);
+
+    //         if (!properties.headers) {
+    //             properties.headers = {};
+    //         }
+    //         properties.headers["Content-Type"] = "application/json";
+    //     } catch {
+
+    //     }
+    // }
+
     let response = null;
     if (credsStatus && credsStatus.device_id) {
         console.log("AUTHENTICATED");

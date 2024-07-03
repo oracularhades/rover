@@ -28,15 +28,20 @@ export default function Users() {
         set_data(response.data);
     }
 
+    async function user_created() {
+        get_users();
+        document.getElementById("user_create_1").close();
+    }
+
     return (
         <div className="frame_div">
             <Home1 className="home_padding align_items_center">
-                <UserCreate1 id="user_create_1"/>
+                <UserCreate1 on_success={user_created} id="user_create_1"/>
                 <TopbarPage1>
                     <p></p>
-                    <button onClick={() => { document.getElementById("user_create_1").showModal() }}>Create user</button>
+                    <button onClick={() => { document.getElementById("user_create_1").showModal(); }}>Create user</button>
                 </TopbarPage1>
-                <Table1 data={to_table(data)}/>
+                <Table1 data={data}/>
             </Home1>
         </div>
     )

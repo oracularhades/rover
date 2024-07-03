@@ -1,45 +1,44 @@
+import { to_table } from '@/global';
 import './table1.css';
 
 export default function Table1(props) {
-    let data = []
-    if (props.data) {
-        data = props.data;
+    if (!props.data) {
+        return;
     }
 
-    const ColumnItem = ((props) => {
+    const data = to_table(props.data);
+    const keys = Object.keys(data);
+    // const keys = ["id", "first_name", "last_name", "email", "admin_permission_flags"];
+
+    const column_headers = keys.map((key) => {
         return (
-            <div className='table1_column_item'>
-                {props.content}
-            </div>
+            <th>{key}</th>
         )
     });
 
-    const Column = ((props) => {
-        const Column_Items = props.data.map((data) => {
+    const columns = props.data.map((data) => {
+        let content = keys.map((key) => {
             return (
-                <ColumnItem content={data}/>
+                <td>{data[key]}</td>
             )
         });
 
         return (
-            <div className='table1_column'>
-                <p className='table1_column_header'>{props.header}</p>
-                <div className='table1_column_content'>
-                    {Column_Items}
-                </div>
-            </div>
-        )
-    });
-
-    const columns = Object.keys(data).map((key) => {
-        return (
-            <Column header={key} data={data[key]}/>
-        )
+            <tr>
+                {content}
+            </tr>
+        );
     });
 
     return (
-        <div className='table1'>
-            {columns}
-        </div>
+        <table className='table1'>
+            <tbody>
+                <tr>
+                    {column_headers}
+                </tr>
+
+                {columns}
+            </tbody>
+        </table>
     )
 }

@@ -1,0 +1,31 @@
+.Sidebar_Section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 2px;
+}
+
+.Sidebar_Section .top {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 4px;
+}
+
+.Sidebar_Section .header {
+    font-size: 14px;
+    min-width: fit-content;
+    font-weight: bold;
+}
+
+.Sidebar_Section .side_line {
+    width: 100%;
+}
+
+.Sidebar_Section_children {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 4px;
+}

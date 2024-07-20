@@ -21,5 +21,5 @@ async function list(hostname) {
 }
 
 
-const process = { list };
-export default process;
+const processes = { list };
+export default processes;

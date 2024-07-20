@@ -9,10 +9,12 @@ import UserCreate1 from "@/components/internal_components/user/dialog/user-creat
 import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";
 import No_results from "@/components/tip/no_results";
+import LoadingSpinner from "@/components/miscellaneous/loadingspinner";
 
 export default function Users() {
     const should_run = useRef(true);
-    const [data, set_data] = useState([]);
+    const [users, set_users] = useState([]);
+    const [loading, set_loading] = useState(true);
 
     useEffect(() => {
         if (should_run.current != true) {
@@ -24,8 +26,28 @@ export default function Users() {
     });
 
     async function get_users() {
-        const response = await Rover(creds()).user.list();
-        set_data(response.data);
+        set_loading(true);
+
+        try {
+            const response = await Rover(creds()).user.list();
+            if (response.ok == true) {
+                set_users(response.data);
+                set_loading(false);
+            }
+        } catch (error) {
+            alert(error.message);
+            return;
+        }
+    }
+
+    if (loading == true) {
+        return (
+            <div className="frame_div">
+                <Home1 className="home_padding align_items_center">
+                    <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
+                </Home1>
+            </div>
+        )
     }
 
     async function user_created() {
@@ -45,8 +67,8 @@ export default function Users() {
                     <p></p>
                     <button onClick={() => { create_user() }}>Create user</button>
                 </TopbarPage1>
-                {data.length > 0 && <Table1 data={data}/>}
-                {data.length == 0 && <div>
+                {users.length > 0 && <Table1 data={users}/>}
+                {users.length == 0 && <div>
                     <No_results/>
                 </div>}
             </Home1>

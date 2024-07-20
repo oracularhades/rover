@@ -1,3 +1,4 @@
+import LoadingSpinner from '@/components/miscellaneous/loadingspinner';
 import './css/settings.css';
 import Home1 from "@/components/home/home";
 import Backdrop_content from "@/components/rows/backdrop/backdrop_content";
@@ -17,10 +18,14 @@ export default function Settings() {
                     <Rows_backdrop_row1 icon="/icons/database.svg" header="SQL connection" href="/settings/sql"/>
                     <Rows_backdrop_row1 icon="/icons/backup.svg" header="Backup & restore" href="/settings/backup-or-restore"/>
                     <p className="rover_version greyText">Rover versions: {show_full_version != true && <a className='underline' onClick={() => { set_show_full_version(true) }}>Show</a>}
-                        {show_full_version == true && <div>
-                            Rover admin panel: (Canary) 0.0.1
+                        {show_full_version == true && <div className='rover_version_div'> {/* (Canary) 0.0.1 */}
+                            <div className='version_div'>
+                                Rover admin panel: (Canary) 0.0.1
+                            </div>
                             <br/>
-                            Rover server: (Canary) 0.0.1
+                            <div className='version_div'>
+                                Rover server: <LoadingSpinner speed="600ms" style={{ width: 8, height: 8 }}/>
+                            </div>
                         </div>}
                     </p>
                 </Backdrop_content>

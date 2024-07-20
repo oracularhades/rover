@@ -9,3 +9,16 @@
     row-gap: 12px;
     max-width: 600px;
 }
+
+.rover_version_div {
+    display: flex;
+    flex-direction: column;
+}
+
+.version_div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 4px;
+}

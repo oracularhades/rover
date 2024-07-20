@@ -11,11 +11,11 @@ export default function Home1(props) {
         <Base className="home1">
             <Sidebar2/>
             <div className="home1_children">
-                <Layout_Topbar>
-                    <Switcher header={`rover.internal.motionfans.com`}>
-                        <DropdownOption1 checked={true}>ok</DropdownOption1>
+                {/* <Layout_Topbar>
+                    <Switcher header={`Placeholder Section Title 1`}>
+                        <DropdownOption1 checked={true}>Placeholder Section Title 2</DropdownOption1>
                     </Switcher>
-                </Layout_Topbar>
+                </Layout_Topbar> */}
                 <div className={props.className} style={props.style}>
                     {props.children}
                 </div>

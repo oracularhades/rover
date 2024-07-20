@@ -2,8 +2,9 @@ import fetch_wrapper from "./fetcher.js";
 import general from "./general.js";
 import auth from './lib.js';
 import user from "./user.js";
+import device from "./device.js";
 import network from "./network.js";
-import process from "./process.js";
+import processes from "./process.js";
 
 let deviceIDG = null;
 let privateKeyG = null;
@@ -38,8 +39,9 @@ function Rover(credsObject) {
         fetch_wrapper: fetch_wrapper,
         general: general,
         user: user,
+        device: device,
         network: network,
-        process: process
+        process: processes
     };
 }
 

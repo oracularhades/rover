@@ -14,10 +14,8 @@ function getRoverApiURL() {
         url.protocol = "https:";
     }
 
-    url.searchParams.forEach((key, value) => {
-        url.searchParams.delete(key, value);
-    });
-    
+    url.search = '';
+
     return url.href;
 }
 

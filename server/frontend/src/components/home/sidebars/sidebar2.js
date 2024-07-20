@@ -13,9 +13,9 @@ export default function Sidebar2(props) {
             <SidebarButton1 alias="Users" href="/users" icon="/icons/people.svg"/>
             <SidebarButton1 alias="Devices" href="/devices" icon="/icons/devices.svg"/>
             <SidebarButton1 alias="Network" href="/network" icon="/icons/lan.svg"/>
-            <SidebarButton1 alias="Device Policies" href="/device-policies" icon="/icons/device-settings.svg"/>
-            <SidebarButton1 alias="Browser Isolation" href="/browser-isolation" icon="/icons/cube.svg"/>
             <SidebarButton1 alias="Processes" href="/processes" icon="/icons/monitor-heart.svg"/>
+            <SidebarButton1 alias="Device Policies" href="/device-policies" icon="/icons/device-settings.svg"/>
+            {/* <SidebarButton1 alias="Browser Isolation" href="/browser-isolation" icon="/icons/cube.svg"/> */}
             <SidebarButton1 alias="Settings" href="/settings" icon="/icons/settings.svg"/>
         </div>
     )

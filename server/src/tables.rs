@@ -47,22 +47,24 @@ diesel::table! {
         protocol -> Text,
         size -> Nullable<BigInt>,
         info -> Text,
+        created -> Nullable<BigInt>
     }
 }
 diesel::table! {
     rover_processes (device_id) {
         device_id -> Text,
-        process -> Text,
+        process -> Nullable<Text>,
         last_seen ->  Nullable<BigInt>,
-        user -> Text,
-        admin_user -> Text,
-        is_admin_process -> Text,
+        user -> Nullable<Text>,
+        admin_user -> Nullable<Bool>,
+        is_admin_process -> Nullable<Bool>,
         PID -> Nullable<BigInt>,
-        publisher -> Text,
-        hash -> Text,
+        publisher -> Nullable<Text>,
+        hash -> Nullable<Text>,
         threads ->  Nullable<BigInt>,
         size ->  Nullable<BigInt>,
-        pathname -> Text,
+        pathname -> Nullable<Text>,
+        created -> Nullable<BigInt>
     }
 }
 diesel::table! {

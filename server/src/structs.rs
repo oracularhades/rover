@@ -62,9 +62,11 @@ pub struct Request_authentication_output {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config_sql {
-    pub users_table: Option<String>,
-    pub devices_table: Option<String>,
-    pub magiclink_table: Option<String>
+    pub user: Option<String>,
+    pub device: Option<String>,
+    pub magiclink: Option<String>,
+    pub network: Option<String>,
+    pub process: Option<String>
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -99,7 +101,7 @@ pub struct Post {
     published: bool,
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
+#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable, QueryableByName, Identifiable)]
 #[serde(crate = "rocket::serde")]
 #[diesel(table_name = rover_users)]
 pub struct Rover_users {
@@ -108,14 +110,35 @@ pub struct Rover_users {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub email: Option<String>,
-    pub permission: Option<i64>,
+    pub permission: Option<i64>
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Rover_users_data_for_admins {
+    pub id: String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+    pub permission: Option<i64>
+}
+
+impl From<Rover_users> for Rover_users_data_for_admins {
+    fn from(user: Rover_users) -> Self {
+        Rover_users_data_for_admins {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+            permission: user.permission
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable, QueryableByName, Identifiable)]
 #[serde(crate = "rocket::serde")]
 #[diesel(table_name = rover_devices)]
 pub struct Rover_devices {
-    // #[serde(skip_deserializing)]
+    #[serde(skip_deserializing)]
     pub id: String,
     pub user_id: String,
     pub public_key: String,
@@ -127,11 +150,37 @@ pub struct Rover_devices {
     pub alias: Option<String>
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Rover_devices_data_for_admins {
+    pub id: String,
+    pub user_id: String,
+    pub created: Option<i64>,
+    pub active: Option<bool>,
+    pub compliant: Option<bool>,
+    pub os_type: Option<String>,
+    pub os_version: Option<String>,
+    pub alias: Option<String>
+}
+
+impl From<Rover_devices> for Rover_devices_data_for_admins {
+    fn from(user: Rover_devices) -> Self {
+        Rover_devices_data_for_admins {
+            id: user.id,
+            user_id: user.user_id,
+            created: user.created,
+            active: user.active,
+            compliant: user.compliant,
+            os_type: user.os_type,
+            os_version: user.os_version,
+            alias: user.alias
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable, QueryableByName)]
 #[serde(crate = "rocket::serde")]
 #[diesel(table_name = rover_network)]
 pub struct Rover_network {
-    #[serde(skip_deserializing)]
     pub device_id: String,
     pub domain: String,
     pub ip_address: String,
@@ -140,25 +189,92 @@ pub struct Rover_network {
     pub protocol: String,
     pub size: Option<i64>,
     pub info: String,
+    pub created: Option<i64>
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Rover_network_data_for_admins {
+    pub device_id: String,
+    pub domain: String,
+    pub ip_address: String,
+    pub destination_country: String,
+    pub destination_registrant: String,
+    pub protocol: String,
+    pub size: Option<i64>,
+    pub info: String,
+    pub created: Option<i64>,
+}
+
+impl From<Rover_network> for Rover_network_data_for_admins {
+    fn from(network: Rover_network) -> Self {
+        Rover_network_data_for_admins {
+            device_id: network.device_id,
+            domain: network.domain,
+            ip_address: network.ip_address,
+            destination_country: network.destination_country,
+            destination_registrant: network.destination_registrant,
+            protocol: network.protocol,
+            size: network.size,
+            info: network.info,
+            created: network.created
+        }
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable, QueryableByName)]
 #[serde(crate = "rocket::serde")]
 #[diesel(table_name = rover_processes)]
 pub struct Rover_processes {
-    #[serde(skip_deserializing)]
     pub device_id: String,
-    pub process: String,
+    pub process: Option<String>,
     pub last_seen: Option<i64>,
-    pub user: String,
-    pub admin_user: String,
-    pub is_admin_process: String,
+    pub user: Option<String>,
+    pub admin_user: Option<bool>,
+    pub is_admin_process: Option<bool>,
     pub PID: Option<i64>,
-    pub publisher: String,
-    pub hash: String,
+    pub publisher: Option<String>,
+    pub hash: Option<String>,
     pub threads: Option<i64>,
     pub size: Option<i64>,
-    pub pathname: String,
+    pub pathname: Option<String>,
+    pub created: Option<i64>
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Rover_processes_data_for_admins {
+    pub device_id: String,
+    pub process: Option<String>,
+    pub last_seen: Option<i64>,
+    pub user: Option<String>,
+    pub admin_user: Option<bool>,
+    pub is_admin_process: Option<bool>,
+    pub PID: Option<i64>,
+    pub publisher: Option<String>,
+    pub hash: Option<String>,
+    pub threads: Option<i64>,
+    pub size: Option<i64>,
+    pub pathname: Option<String>,
+    pub created: Option<i64>
+}
+
+impl From<Rover_processes> for Rover_processes_data_for_admins {
+    fn from(user: Rover_processes) -> Self {
+        Rover_processes_data_for_admins {
+            device_id: user.device_id,
+            process: user.process,
+            last_seen: user.last_seen,
+            user: user.user,
+            admin_user: user.admin_user,
+            is_admin_process: user.is_admin_process,
+            PID: user.PID,
+            publisher: user.publisher,
+            hash: user.hash,
+            threads: user.threads,
+            size: user.size,
+            pathname: user.pathname,
+            created: user.created
+        }
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize, Queryable, Insertable, Selectable)]

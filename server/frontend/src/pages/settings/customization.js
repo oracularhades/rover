@@ -9,8 +9,8 @@ export default function Settings_Customization() {
         <div className="frame_div">
             <Home1 className="home_padding settings">
                 <Selector1 header="Logo" src={null} type="clubs_logo" onImageId={(image_id) => {  }}/>
-                <Input_with_header header="Alias" value={"test"}/>
-                <Input_with_header header="Description" value={"test"}/>
+                <Input_with_header header="Alias" value={"placeholder"}/>
+                <Input_with_header header="Description" value={"placeholder"}/>
                 <button>Save changes</button>
             </Home1>
         </div>

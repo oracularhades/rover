@@ -23,15 +23,15 @@ export default function Selector1(props) {
           <p className='selector_header'>{props.header}</p>
           <div className='selector_media_actions'>
           <button className="selector_media_button">
-              <label for="pfp_upload" className='selector_media_label'>
-                  <img className="navButton disable-select" src={`/icons/uploadbuttonsmaller.png`} alt="Upload Button"/>
-                  <p className='disable-select'>Upload</p>
-              </label>
+            <label for="pfp_upload" className='selector_media_label'>
+              <img className="navButton disable-select" src="/icons/cloud_upload.svg" alt="Upload Button"/>
+              <p className='disable-select'>Upload</p>
+            </label>
           </button>
           <input onChange={(e) => { read_image_from_file_insert_into_element(e.target.files[0], random); image_data.current = e.target.files[0]; upload_image(); }} hidden={true} id="pfp_upload" name="file" type="file" accept=".png, .gif, .jpg, .jpeg, .webp"/>
           <button onClick={() => { document.getElementById(random).src = null; image_data.current = "clear"; }} className='selector_media_button shading hover'>
-              <img className="navButton disable-select" src={`/icons/trash.svg`} alt="Clear Button"/>
-              <p className='disable-select'>Clear</p>
+            <img className="navButton disable-select" src={`/icons/trash.svg`} alt="Clear Button"/>
+            <p className='disable-select'>Clear</p>
           </button>
         </div>
       </div>

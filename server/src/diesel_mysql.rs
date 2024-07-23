@@ -83,6 +83,6 @@ pub fn stage() -> AdHoc {
         .mount("/api/user", routes![crate::endpoint::user::user_list, crate::endpoint::user::user_update])
         .mount("/api/network", routes![crate::endpoint::network::network_list])
         .mount("/api/process", routes![crate::endpoint::process::process_list])
-        // .mount("/api/device", routes![crate::device::device_list, crate::device::device_onboard, crate::device::device_update])
+        .mount("/api/device", routes![crate::endpoint::device::device_list])
     })
 }

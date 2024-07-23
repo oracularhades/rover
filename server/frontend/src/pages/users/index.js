@@ -25,13 +25,34 @@ export default function Users() {
         get_users();
     });
 
+    function User_details(props) {
+        return (
+            <a className="user_details_clickable underline gryeText no-text-select" onClick={() => { create_user() }}>Details</a>
+        )
+    }
+
     async function get_users() {
         set_loading(true);
 
         try {
             const response = await Rover(creds()).user.list();
             if (response.ok == true) {
-                set_users(response.data);
+                let user_data = [];
+                response.data.forEach(user => {
+                    // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
+                    let user_obj = {
+                        id: user.id,
+                        first_name: user.first_name,
+                        last_name: user.last_name,
+                        email: user.email,
+                        permission: user.permission
+                    };
+
+                    user_obj.options = <User_details data={user}/>
+
+                    user_data.push(user_obj);
+                });
+                set_users(user_data);
                 set_loading(false);
             }
         } catch (error) {

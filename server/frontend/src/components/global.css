@@ -55,6 +55,11 @@ dialog {
   overflow-x: hidden;
 }
 
+dialog::backdrop {
+  opacity: 0.7;
+  background-color: black;
+}
+
 Input {
   position: relative;
   /* background-color: #303132; */
@@ -150,4 +155,20 @@ a {
 
 .third_element {
   background-color: #dedede;
+}
+
+.hover_underline {
+  text-decoration: none;
+}
+
+.hover_underline:hover {
+  text-decoration: underline;
+}
+
+.no-text-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
 }

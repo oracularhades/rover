@@ -69,8 +69,8 @@ export default function Processes() {
     return (
         <div className="frame_div">
             <Home1 className="home_padding align_items_center">
-                {data.length > 0 && <Table1 data={processes}/>}
-                {data.length == 0 && <div>
+                {processes.length > 0 && <Table1 data={processes}/>}
+                {processes.length == 0 && <div>
                     <No_results tip="Setup process management" tip_href="https://github.com/oracularhades/rover/wiki/Setup-process-management"/>
                 </div>}
             </Home1>

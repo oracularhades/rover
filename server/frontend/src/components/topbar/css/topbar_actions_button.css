@@ -1,4 +1,8 @@
 .topbar_actions_button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
     font-size: 13px;
     height: 30px;
     column-gap: 2px;

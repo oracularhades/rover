@@ -19,6 +19,8 @@
     padding: 0px;
     padding-left: 4px;
     padding-right: 4px;
+
+    color: inherit;
 }
 
 .device_component_icon {

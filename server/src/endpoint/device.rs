@@ -1,4 +1,3 @@
-use rocket::fairing::AdHoc;
 use rocket::response::{Debug, status::Created};
 use rocket::serde::{Serialize, Deserialize, json::Json};
 use rocket::response::status;
@@ -6,85 +5,85 @@ use rocket::http::Status;
 use rocket::response::status::Custom;
 use rocket::serde::json::Value;
 use rocket::serde::json::json;
-use rocket::serde::json::serde_json;
 
 use rocket_db_pools::{Database, Connection};
 use rocket_db_pools::diesel::{MysqlPool, prelude::*};
 
 use diesel::prelude::*;
 use diesel::sql_types::*;
-
-use std::process::{Command, Stdio};
-use std::time::{SystemTime, UNIX_EPOCH};
-use std::env;
-
-use std::fs::{File};
-use std::io::Write;
-
-use rand::prelude::*;
+use diesel::sql_query;
 
 use crate::global::{ generate_random_id, is_null_or_whitespace, request_authentication };
 use crate::responses::*;
 use crate::structs::*;
 use crate::tables::*;
-
-use hades_auth::*;
+use crate::SQL_TABLES;
 
 #[get("/list")]
 pub async fn device_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
-    println!("device params: {:?}", params);
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
+    let sql: Config_sql = (&*SQL_TABLES).clone();
+
+    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/device/list", false).await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
     db = request_authentication_output.returned_connection;
 
-    let results = rover_devices::table
-        // .filter(rover_devices::location.eq("onboard_client"))
-        .select(Rover_devices::as_select())
-        .load(&mut db)
-        .await.expect("Query failed");
+    let devices_result: Vec<Rover_devices> = sql_query(format!("SELECT id, user_id, created, active, compliant, os_type, os_version, alias, public_key FROM {} WHERE location=? ORDER BY created DESC", sql.device.unwrap()))
+    .bind::<Text, _>("onboard_client".to_string())
+    .load::<Rover_devices>(&mut db)
+    .await
+    .expect("Something went wrong querying the DB.");
+
+    let mut devices_public: Vec<Rover_devices_data_for_admins> = devices_result
+    .into_iter()
+    .map(Rover_devices_data_for_admins::from)
+    .collect();
 
     status::Custom(Status::Ok, json!({
         "ok": true,
-        "data": results
+        "data": devices_public
     }))
 }
 
-#[post("/update", format = "application/json", data = "<body>")]
-pub async fn device_update(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
-        Ok(data) => data,
-        Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
-    };
-    db = request_authentication_output.returned_connection;
+// #[post("/update", format = "application/json", data = "<body>")]
+// pub async fn device_update(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
+//     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let results = rover_processes::table
-        .select(Rover_processes::as_select())
-        .load(&mut db)
-        .await.expect("Query failed");
+//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
+//         Ok(data) => data,
+//         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
+//     };
+//     db = request_authentication_output.returned_connection;
 
-    status::Custom(Status::Ok, json!({
-        "ok": true,
-        "data": results
-    }))
-}
+//     let results = rover_processes::table
+//         .select(Rover_processes::as_select())
+//         .load(&mut db)
+//         .await.expect("Query failed");
 
-#[post("/onboard", format = "application/json", data = "<body>")]
-pub async fn device_onboard(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
-        Ok(data) => data,
-        Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
-    };
-    db = request_authentication_output.returned_connection;
+//     status::Custom(Status::Ok, json!({
+//         "ok": true,
+//         "data": results
+//     }))
+// }
 
-    let results = rover_processes::table
-        .select(Rover_processes::as_select())
-        .load(&mut db)
-        .await.expect("Query failed");
+// #[post("/onboard", format = "application/json", data = "<body>")]
+// pub async fn device_onboard(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
+//     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    status::Custom(Status::Ok, json!({
-        "ok": true,
-        "data": results
-    }))
-}
+//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
+//         Ok(data) => data,
+//         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
+//     };
+//     db = request_authentication_output.returned_connection;
+
+//     let results = rover_processes::table
+//         .select(Rover_processes::as_select())
+//         .load(&mut db)
+//         .await.expect("Query failed");
+
+//     status::Custom(Status::Ok, json!({
+//         "ok": true,
+//         "data": results
+//     }))
+// }

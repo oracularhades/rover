@@ -1,5 +1,5 @@
 import '../../../global.css';
-import "../../../../../styles/global.css";
+import "@/styles/global.css";
 import './css/rows-backdrop-row1.css';
 import Link from 'next/link';
 

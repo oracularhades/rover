@@ -1,4 +1,4 @@
-import '../styles/global.css';
+import '../src/styles/global.css';
 import { redirect } from 'next/navigation';
 
 export default function Main() {

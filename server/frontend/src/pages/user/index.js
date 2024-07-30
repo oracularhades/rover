@@ -1,9 +1,9 @@
-import Home1 from "@/components/home/home";
-import "./../../../styles/global.css";
-import "./../../../styles/flags.css";
-import Table1 from "@/components/tables/table1/table1";
 import "./css/users.css";
-import { creds, to_table } from "../../global";
+import "@/styles/global.css";
+import "@/styles/flags.css";
+import Home1 from "@/components/home/home";
+import Table1 from "@/components/tables/table1/table1";
+import { creds } from "../../global";
 import TopbarPage1 from "@/components/internal_components/topbar/page/topbar-page1";
 import UserCreate1 from "@/components/internal_components/user/dialog/user-create1";
 import { useEffect, useRef, useState } from "react";
@@ -27,7 +27,7 @@ export default function Users() {
 
     function User_details(props) {
         return (
-            <a className="user_details_clickable underline gryeText no-text-select" onClick={() => { create_user() }}>Details</a>
+            <a className="user_details_clickable no-text-select underline gryeText" onClick={() => { create_user() }}>Details</a>
         )
     }
 
@@ -82,14 +82,15 @@ export default function Users() {
 
     return (
         <div className="frame_div">
-            <Home1 className="home_padding align_items_center">
+            <Home1 className="home_padding">
                 <UserCreate1 on_success={user_created} id="user_create_1"/>
                 <TopbarPage1>
                     <p></p>
                     <button onClick={() => { create_user() }}>Create user</button>
                 </TopbarPage1>
                 {users.length > 0 && <Table1 data={users}/>}
-                {users.length == 0 && <div>
+                {/* note to self: need a way to update a user's permisisons, probably adding tabs between user actions and content boxes. So content boxes are under "overview" and you can get more specific. */}
+                {users.length == 0 && <div className="align_items_center">
                     <No_results/>
                 </div>}
             </Home1>

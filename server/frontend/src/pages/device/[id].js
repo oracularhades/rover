@@ -1,6 +1,6 @@
 import Home1 from "@/components/home/home";
 import Device_Component from "@/components/internal_components/devices/device_component";
-import "./../../../styles/global.css";
+import "@/styles/global.css";
 import "./css/device.css";
 import Topbar_Actions from "@/components/topbar/topbar_actions";
 import Topbar_Actions_Button from "@/components/topbar/topbar_actions_button";

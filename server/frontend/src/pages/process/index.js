@@ -1,8 +1,8 @@
-import Home1 from "@/components/home/home";
-import "./../../../styles/global.css";
-import "./../../../styles/flags.css";
-import Table1 from "@/components/tables/table1/table1";
+import "@/styles/global.css";
+import "@/styles/flags.css";
 import "./css/processes.css";
+import Home1 from "@/components/home/home";
+import Table1 from "@/components/tables/table1/table1";
 import No_results from "@/components/tip/no_results";
 import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";

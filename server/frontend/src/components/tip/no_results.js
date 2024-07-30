@@ -21,6 +21,6 @@ export default function No_results(props) {
     // });
 
     return (
-        <p className="greyText">No results {props.tip && `- `}{props.tip && <Link href={props.tip_href ? props.tip_href : ''} target="_blank" rel="noreferrer">{props.tip}</Link>}</p>
+        <p className="greyText">{props.custom_header ? props.custom_header : "No results"} {props.tip && `- `}{props.tip && <Link href={props.tip_href ? props.tip_href : ''} target="_blank" rel="noreferrer">{props.tip}</Link>}</p>
     )
 }

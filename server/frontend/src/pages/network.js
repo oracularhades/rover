@@ -1,5 +1,5 @@
-import "./../../styles/global.css";
-import "./../../styles/flags.css";
+import "@/styles/global.css";
+import "@/styles/flags.css";
 import Home1 from "@/components/home/home";
 import Table1 from "../components/tables/table1/table1";
 import No_results from '@/components/tip/no_results';

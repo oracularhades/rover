@@ -1,4 +1,4 @@
-import "./../../styles/global.css";
+import "@/styles/global.css";
 import Home1 from "@/components/home/home";
 import No_results from "@/components/tip/no_results";
 

@@ -1,0 +1,9 @@
+.tab_button1 button {
+    box-shadow: none;
+    background-color: white;
+    border-radius: 0px;
+}
+
+.tab_button1_selected {
+    border-bottom: solid 3px grey;
+}

@@ -36,7 +36,11 @@ pub fn generate_random_id() -> String {
     random_string + &timestamp.to_string()
 }
 
-pub fn is_null_or_whitespace(s: String) -> bool {
+pub fn is_null_or_whitespace(data: Option<String>) -> bool {
+    if (data.is_none()) {
+        return true;
+    }
+    let s = data.unwrap();
     match s {
         string if string == "null" || string == "undefined" => true,
         string => string.trim().is_empty(),

@@ -8,14 +8,6 @@
     width: 100%;
 }
 
-.device_grid {
-    width: 100%;
-}
-
-.device_grid .backdrop_content {
-    height: 400px;
-}
-
 .view_full {
     font-weight: bold;
     font-size: 15px;

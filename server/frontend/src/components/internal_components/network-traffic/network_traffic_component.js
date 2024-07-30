@@ -1,5 +1,5 @@
 import './css/network_traffic_component.css';
-import '../../../../styles/flags.css';
+import '@/styles/flags.css';
 
 export default function Network_traffic_Component(props) {
     const Right_Button = ((props) => {

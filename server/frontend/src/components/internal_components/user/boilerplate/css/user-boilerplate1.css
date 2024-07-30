@@ -1,0 +1,54 @@
+.user_boilerplate1 {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+}
+
+.user_boilerplate1_user_details {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 14px;
+}
+
+.user_boilerplate1_user_details_metadata {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2px;
+}
+
+.user_boilerplate1_user_details_metadata h2 {
+    margin-bottom: 0px;
+}
+
+.user_boilerplate1_user_details_metadata_full_name {
+    font-size: 22px;
+}
+
+.user_boilerplate1_user_details_metadata_email {
+    font-size: 16px;
+}
+
+.user_boilerplate1_actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.user_boilerplate1_actions .button_with_icon {
+    font-size: 14px;
+    box-shadow: unset;
+    background-color: white;
+    outline: 1px grey solid;
+}
+
+.user_boilerplate1_actions .button_with_icon img {
+    width: 18px;
+    height: 18px;
+}
+
+.user_boilerplate1_user_details_suspended_reason {
+    color: red;
+    font-size: 14px;
+}

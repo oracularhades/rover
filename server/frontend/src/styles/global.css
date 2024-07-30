@@ -17,3 +17,11 @@
     font-weight: bold;
     font-size: 14px;
 }
+
+.device_grid {
+    width: 100%;
+}
+
+.device_grid .backdrop_content {
+    height: 400px;
+}

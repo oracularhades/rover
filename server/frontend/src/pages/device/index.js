@@ -1,6 +1,6 @@
 import Home1 from "@/components/home/home";
 import Device_Component from "@/components/internal_components/devices/device_component";
-import "./../../../styles/global.css";
+import "@/styles/global.css";
 import No_results from "@/components/tip/no_results";
 import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";

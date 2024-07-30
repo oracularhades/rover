@@ -10,7 +10,7 @@ export default function Sidebar2(props) {
                 <button>Logout</button>
             </UserCard1>}/>
             <SidebarButton1 alias="Home" href="/home" icon="/icons/home.svg"/>
-            <SidebarButton1 alias="Users" href="/users" icon="/icons/people.svg"/>
+            <SidebarButton1 alias="Users" href="/user" icon="/icons/people.svg"/>
             <SidebarButton1 alias="Devices" href="/device" icon="/icons/devices.svg"/>
             <SidebarButton1 alias="Network" href="/network" icon="/icons/lan.svg"/>
             <SidebarButton1 alias="Processes" href="/process" icon="/icons/monitor-heart.svg"/>

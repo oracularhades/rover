@@ -23,12 +23,12 @@
                     FontSize="14"
                 />
 
-                <Entry Placeholder="rover.motionfans.com" WidthRequest="400" HorizontalOptions="Start" />
+                <Entry Placeholder="rover.example.com" WidthRequest="400" HorizontalOptions="Start" />
 
                 <Button
                     x:Name="register_button"
                     Text="Register" 
-                    SemanticProperties.Hint="Allows user to loginto Rover server and register their device"
+                    SemanticProperties.Hint="Allows user to log into Rover server and register their device"
                     Clicked="OnCounterClicked"
                     HorizontalOptions="Start"
                     FontSize="14" 

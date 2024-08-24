@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@oracularhades/rover": "file:rover-npm",
-    "next": "latest",
+    "next": "^14.2.6",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

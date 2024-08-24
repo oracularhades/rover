@@ -2,8 +2,6 @@ use rocket::serde::{Serialize, Deserialize};
 use diesel::prelude::*;
 use diesel::sql_types::*;
 use crate::structs::*;
-use rocket_db_pools::{Database, Connection};
-use rocket_db_pools::diesel::{MysqlPool, prelude::*};
 
 diesel::table! {
     posts (id) {

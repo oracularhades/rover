@@ -1,3 +1,5 @@
+use diesel::prelude::*;
+
 use std::process::{Command, Stdio};
 use std::error::Error;
 use std::collections::HashMap;
@@ -11,9 +13,6 @@ use crate::tables::*;
 
 use url::Url;
 use rand::prelude::*;
-
-use rocket_db_pools::{Database, Connection};
-use rocket_db_pools::diesel::{MysqlPool, prelude::*};
 
 use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
@@ -47,7 +46,9 @@ pub fn is_null_or_whitespace(data: Option<String>) -> bool {
     }
 }
 
-pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>, params: &Query_string, pathname: &str, use_cropped_body: bool) -> Result<Request_authentication_output, Box<dyn Error>> {
+pub async fn request_authentication(body: Option<String>, params: &Query_string, pathname: &str, use_cropped_body: bool) -> Result<Request_authentication_output, Box<dyn Error>> {
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
+
     let mut params_object: HashMap<String, String> = HashMap::new();
     let params_string: String = params.0.clone();
     if !params_string.is_empty() {
@@ -83,7 +84,6 @@ pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>
     let result: Option<Rover_devices> = rover_devices::table
         .filter(rover_devices::id.eq(&device_id))
         .first(&mut db)
-        .await
         .optional().expect("Something went wrong querying the DB1.");
 
     println!("4");
@@ -113,7 +113,7 @@ pub async fn request_authentication(mut db: Connection<Db>, body: Option<String>
     println!("Auth didn't fail");
 
     return Ok(Request_authentication_output {
-        returned_connection: db,
+        // returned_connection: db,
         device_id: device_id,
         user_id: user_id
     });

@@ -2,12 +2,6 @@
 FROM --platform=linux/amd64 rust:latest as build-stage
 WORKDIR /rover-server
 
-ENV DATABASE_URL="mysql://example-user:my_cool_secret@127.0.0.1:3306/prod"
-ENV smtp_host="smtp.sendgrid.net"
-ENV smtp_port="587"
-ENV smtp_username="apikey"
-ENV smtp_from_header="noreply@paperplane.motionfans.com"
-
 LABEL org.opencontainers.image.source=https://github.com/oracularhades/guard
 
 COPY Cargo.lock /rover-server/Cargo.lock
@@ -58,6 +52,8 @@ RUN curl -Lo /rover-server/guard.zip https://github.com/oracularhades/guard/rele
 RUN unzip -d /rover-server /rover-server/guard.zip
 # RUN chmod +x /rover-server/guard/rover-server
 
+# Update crates
+RUN cargo update
 # Build
 RUN cargo build --release
 

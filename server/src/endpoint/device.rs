@@ -6,9 +6,6 @@ use rocket::response::status::Custom;
 use rocket::serde::json::Value;
 use rocket::serde::json::json;
 
-use rocket_db_pools::{Database, Connection};
-use rocket_db_pools::diesel::{MysqlPool, prelude::*};
-
 use diesel::prelude::*;
 use diesel::sql_types::*;
 use diesel::sql_query;
@@ -20,19 +17,18 @@ use crate::tables::*;
 use crate::SQL_TABLES;
 
 #[get("/list")]
-pub async fn device_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
+pub async fn device_list(params: &Query_string) -> Custom<Value> {
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/device/list", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/device/list", false).await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
-    db = request_authentication_output.returned_connection;
 
     let devices_result: Vec<Rover_devices> = sql_query(format!("SELECT id, user_id, created, active, compliant, os_type, os_version, alias, public_key FROM {} WHERE location=? ORDER BY created DESC", sql.device.unwrap()))
     .bind::<Text, _>("onboard_client".to_string())
-    .load::<Rover_devices>(&mut db)
-    .await
+    .load::<Rover_devices>(&mut *db)
     .expect("Something went wrong querying the DB.");
 
     let mut devices_public: Vec<Rover_devices_data_for_admins> = devices_result

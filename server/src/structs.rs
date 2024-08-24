@@ -1,12 +1,12 @@
-use diesel::sql_types::BigInt;
-use rocket::serde::{Serialize, Deserialize};
+use diesel::prelude::*;
 use crate::tables::*;
-use rocket_db_pools::{Database, Connection};
-use rocket_db_pools::diesel::{MysqlPool, prelude::*};
+use rocket::serde::{Serialize, Deserialize};
+use diesel::r2d2::{self, ConnectionManager};
 
-#[derive(Database)]
-#[database("diesel_mysql")]
-pub struct Db(MysqlPool);
+type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+
+// #[database("mysql_db")]
+// struct DbConn(MysqlConnection);
 
 // Incoming body structs
 #[derive(Clone, Debug, Deserialize)]
@@ -54,7 +54,7 @@ pub struct Query_string(pub String);
 pub struct Request_authentication(pub Option<Request_authentication_output>);
 
 pub struct Request_authentication_output {
-    pub returned_connection: Connection<Db>,
+    // pub returned_connection: &MysqlConnection,
     // #[derive(Clone, Debug, Deserialize)]
     pub user_id: String,
     pub device_id: String

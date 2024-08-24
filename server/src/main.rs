@@ -43,25 +43,21 @@ use crate::responses::*;
 use crate::structs::*;
 use crate::database::{ validate_sql_table_inputs };
 
-// type DbPool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+use diesel::MysqlConnection;
+use diesel::prelude::*;
+use diesel::sql_types::*;
+use diesel::r2d2::{self, ConnectionManager};
 
-// static POOL: Lazy<DbPool> = Lazy::new(|| {
-    // let sql_json = serde_json::to_string(&CONFIG_VALUE["database"]["mysql"]).expect("Failed to serialize");
-    // let sql: Config_database_mysql = serde_json::from_str(&sql_json).expect("Failed to parse");
+// Create a type alias for the connection pool
+type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
-    // let password_env = environment_variables::get(sql.password_env.clone().expect("config.sql.password_env is missing.")).expect(&format!("The environment variable specified in config.sql.password_env ('{:?}') is missing.", sql.password_env.clone()));
-
-    // let username = sql.username.expect("Missing username.");
-    // let hostname = sql.hostname.expect("Missing hostname.");
-    // let port = sql.port.expect("Missing port.");
-    // let database = sql.database.expect("Missing database.");
-
-    // let database_url = database::create_database_url(username, password_env, hostname, port, database);
-    // let manager = ConnectionManager::<MysqlConnection>::new(database_url);
-//     r2d2::Pool::builder()
-//         .build(manager)
-//         .expect("Failed to create pool.")
-// });
+// Create a Lazy static variable for the connection pool
+static DB_POOL: Lazy<Pool> = Lazy::new(|| {
+    let manager = ConnectionManager::<MysqlConnection>::new(crate::database::get_default_database_url());
+    r2d2::Pool::builder()
+        .build(manager)
+        .expect("Failed to create pool.")
+});
 
 pub static CONFIG_VALUE: Lazy<Value> = Lazy::new(|| {
     get_config().expect("Failed to get config")
@@ -128,13 +124,10 @@ async fn rocket() -> _ {
     let (unsafe_do_not_use_sql_tables, unsafe_do_not_use_raw_sql_tables) = get_sql_tables().unwrap();
     validate_sql_table_inputs(unsafe_do_not_use_raw_sql_tables).await.expect("Config validation failed.");
 
-    println!("hm {}", database::get_default_database_url().await);
-    let figment = rocket::Config::figment()
-        .merge(("databases.diesel_mysql.url", database::get_default_database_url().await));
+    let figment = rocket::Config::figment();
 
     rocket::custom(figment)
         .attach(Cors)
-        .attach(diesel_mysql::stage())
         .register("/", catchers![internal_error])
 }
 

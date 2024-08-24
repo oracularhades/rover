@@ -3,32 +3,28 @@ use rocket::serde::json::{Value, json};
 use rocket::response::{status, status::Custom};
 use rocket::http::Status;
 
-use rocket_db_pools::{Database, Connection};
-use rocket_db_pools::diesel::{MysqlPool, prelude::*};
-
 use diesel::prelude::*;
 use diesel::sql_types::*;
 use diesel::sql_query;
 
-use crate::global::{ request_authentication, generate_random_id };
+use crate::global::{ generate_random_id, is_null_or_whitespace, request_authentication };
 use crate::{responses::*};
 use crate::structs::*;
 use crate::tables::*;
 use crate::SQL_TABLES;
 
 #[get("/list")]
-pub async fn user_list(mut db: Connection<Db>, params: &Query_string) -> Custom<Value> {
+pub async fn user_list(params: &Query_string) -> Custom<Value> {
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/user/list", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/list", false).await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
-    db = request_authentication_output.returned_connection;
 
     let user_result: Vec<Rover_users> = sql_query(format!("SELECT id, first_name, last_name, email, permission FROM {} ORDER BY created DESC", sql.user.unwrap()))
     .load::<Rover_users>(&mut db)
-    .await
     .expect("Something went wrong querying the DB.");
 
     let mut user_public: Vec<Rover_users_data_for_admins> = user_result
@@ -43,14 +39,14 @@ pub async fn user_list(mut db: Connection<Db>, params: &Query_string) -> Custom<
 }
 
 #[post("/update", format = "application/json", data = "<body>")]
-pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body: Json<User_update_body>) -> Custom<Value> {
+pub async fn user_update(params: &Query_string, mut body: Json<User_update_body>) -> Custom<Value> {
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/user/update", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/update", false).await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
-    db = request_authentication_output.returned_connection;
 
     // block more than 13 characters for admin_permission_flags.
 
@@ -68,13 +64,13 @@ pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body
         return status::Custom(Status::BadRequest, error_message("body.id cannot be specified when body.action='create'"));
     }
 
-    if (body.first_name.is_none() == true) {
+    if (is_null_or_whitespace(body.first_name.clone()) == true) {
         return status::Custom(Status::BadRequest, error_message("body.first_name is null or whitespace."));
     }
-    if (body.last_name.is_none() == true) {
+    if (is_null_or_whitespace(body.last_name.clone()) == true) {
         return status::Custom(Status::BadRequest, error_message("body.last_name is null or whitespace."));
     }
-    if (body.email.is_none() == true) {
+    if (is_null_or_whitespace(body.email.clone()) == true) {
         return status::Custom(Status::BadRequest, error_message("body.email is null or whitespace."));
     }
     if (body.permission.is_none() == true) {
@@ -97,7 +93,6 @@ pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body
         let result: Option<Rover_users> = rover_users::table
         .filter(rover_users::id.eq(user_id.clone()))
         .first(&mut db)
-        .await
         .optional().expect("Something went wrong querying the DB.");
 
         if (result.is_none() == true) {
@@ -106,7 +101,7 @@ pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body
 
         diesel::update(crate::tables::rover_users::table.filter(crate::tables::rover_users::id.eq(user_id.clone())))
         .set((rover_users::first_name.eq(first_name), rover_users::last_name.eq(last_name), rover_users::email.eq(email), rover_users::permission.eq(permission)))
-        .execute(&mut db).await.expect("Failed to update");
+        .execute(&mut db).expect("Failed to update");
     } else if (action == "create") {
         // Check if a user with the provided email already exists, we do not want duplicate emails.
 
@@ -114,7 +109,6 @@ pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body
         let result: Option<Rover_users> = rover_users::table
         .filter(rover_users::email.eq(email.clone()))
         .first(&mut db)
-        .await
         .optional().expect("Something went wrong querying the DB.");
 
         if (result.is_none() == false) {
@@ -131,7 +125,7 @@ pub async fn user_update(mut db: Connection<Db>, params: &Query_string, mut body
         diesel::insert_into(rover_users::table)
         .values(&user_insert)
         .execute(&mut db)
-        .await.expect("fail");
+        .expect("fail");
     }
 
     return status::Custom(Status::Ok, json!({

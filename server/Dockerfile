@@ -88,7 +88,7 @@ COPY --from=build-stage /rover-server /rover-server
 
 # Install libcap2-bin for setting capabilities
 RUN apt update
-RUN apt install -y libcap2-bin default-mysql-client dnsutils
+RUN apt install -y libcap2-bin default-mysql-client dnsutils tree
 
 # Add a non-root user kube with restricted shell
 RUN adduser kube --disabled-login

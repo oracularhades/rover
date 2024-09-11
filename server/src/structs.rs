@@ -275,8 +275,7 @@ impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for
             size: process.size,
             pathname: process.pathname,
             created: process.created,
-            // Map fields from Rover_devices if available
-            device: device.into()
+            device: device.map(|d| d)
         }
     }
 }

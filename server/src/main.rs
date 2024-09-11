@@ -128,6 +128,7 @@ async fn rocket() -> _ {
 
     rocket::custom(figment)
         .attach(Cors)
+        .attach(diesel_mysql::stage())
         .register("/", catchers![internal_error])
 }
 

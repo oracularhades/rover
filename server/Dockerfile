@@ -119,6 +119,8 @@ RUN chmod +x /rover-server/start-webservers.sh
 # Set the capability to bind to port 80 for the cargo binary
 RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/nginx
 
+RUN tree /rover-server
+
 # Run the application as kube user
 USER kube
 CMD export guard_config=$(cat /rover-server/guard/guard-config.toml) & /rover-server/start-webservers.sh

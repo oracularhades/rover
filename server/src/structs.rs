@@ -256,11 +256,7 @@ pub struct Rover_processes_data_for_admins {
     pub size: Option<i64>,
     pub pathname: Option<String>,
     pub created: Option<i64>,
-    // Add fields from Rover_devices
-    pub device_alias: Option<String>,
-    pub os_type: Option<String>,
-    pub os_version: Option<String>,
-    pub location: Option<String>,
+    pub device: Option<Rover_devices>
 }
 
 impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for_admins {
@@ -280,10 +276,7 @@ impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for
             pathname: process.pathname,
             created: process.created,
             // Map fields from Rover_devices if available
-            device_alias: device.as_ref().and_then(|d| d.alias.clone()),
-            os_type: device.as_ref().and_then(|d| d.os_type.clone()),
-            os_version: device.as_ref().and_then(|d| d.os_version.clone()),
-            location: device.as_ref().and_then(|d| d.location.clone()),
+            device: device.into()
         }
     }
 }

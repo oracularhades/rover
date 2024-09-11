@@ -31,6 +31,7 @@ diesel::table! {
         compliant -> Nullable<Bool>,
         os_type -> Nullable<Text>,
         os_version -> Nullable<Text>,
+        location -> Nullable<Text>,
         alias -> Nullable<Text>
     }
 }
@@ -74,3 +75,5 @@ diesel::table! {
         user_id -> Text,
     }
 }
+
+diesel::allow_tables_to_appear_in_same_query!(rover_devices, rover_processes);

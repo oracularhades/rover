@@ -147,6 +147,7 @@ pub struct Rover_devices {
     pub compliant: Option<bool>,
     pub os_type: Option<String>,
     pub os_version: Option<String>,
+    pub location: Option<String>,
     pub alias: Option<String>
 }
 
@@ -254,25 +255,35 @@ pub struct Rover_processes_data_for_admins {
     pub threads: Option<i64>,
     pub size: Option<i64>,
     pub pathname: Option<String>,
-    pub created: Option<i64>
+    pub created: Option<i64>,
+    // Add fields from Rover_devices
+    pub device_alias: Option<String>,
+    pub os_type: Option<String>,
+    pub os_version: Option<String>,
+    pub location: Option<String>,
 }
 
-impl From<Rover_processes> for Rover_processes_data_for_admins {
-    fn from(user: Rover_processes) -> Self {
+impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for_admins {
+    fn from((process, device): (Rover_processes, Option<Rover_devices>)) -> Self {
         Rover_processes_data_for_admins {
-            device_id: user.device_id,
-            process: user.process,
-            last_seen: user.last_seen,
-            user: user.user,
-            admin_user: user.admin_user,
-            is_admin_process: user.is_admin_process,
-            PID: user.PID,
-            publisher: user.publisher,
-            hash: user.hash,
-            threads: user.threads,
-            size: user.size,
-            pathname: user.pathname,
-            created: user.created
+            device_id: process.device_id,
+            process: process.process,
+            last_seen: process.last_seen,
+            user: process.user,
+            admin_user: process.admin_user,
+            is_admin_process: process.is_admin_process,
+            PID: process.PID,
+            publisher: process.publisher,
+            hash: process.hash,
+            threads: process.threads,
+            size: process.size,
+            pathname: process.pathname,
+            created: process.created,
+            // Map fields from Rover_devices if available
+            device_alias: device.as_ref().and_then(|d| d.alias.clone()),
+            os_type: device.as_ref().and_then(|d| d.os_type.clone()),
+            os_version: device.as_ref().and_then(|d| d.os_version.clone()),
+            location: device.as_ref().and_then(|d| d.location.clone()),
         }
     }
 }

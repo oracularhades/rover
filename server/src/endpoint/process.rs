@@ -23,8 +23,14 @@ pub async fn process_list(params: &Query_string) -> Custom<Value> {
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
 
-    let process_result: Vec<Rover_processes> = sql_query(format!("SELECT device_id, process, last_seen, user, admin_user, is_admin_process, PID, publisher, hash, threads, size, pathname, created FROM {} ORDER BY created DESC", sql.process.unwrap()))
-    .load::<Rover_processes>(&mut db)
+    let process_result: Vec<(Rover_processes, Option<Rover_devices>)> = rover_processes::table
+    .left_join(crate::tables::rover_devices::dsl::rover_devices.on(crate::tables::rover_devices::dsl::id.nullable().eq(crate::tables::rover_processes::dsl::device_id.nullable())))
+    .order(rover_processes::created.desc())
+    .select((
+        rover_processes::all_columns,
+        rover_devices::all_columns.nullable(),
+    ))
+    .load::<(Rover_processes, Option<Rover_devices>)>(&mut *db)
     .expect("Something went wrong querying the DB.");
 
     let mut process_public: Vec<Rover_processes_data_for_admins> = process_result

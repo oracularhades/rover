@@ -8,7 +8,7 @@ use diesel::sql_types::*;
 use diesel::sql_query;
 
 use crate::global::{ generate_random_id, is_null_or_whitespace, request_authentication };
-use crate::{responses::*};
+use crate::responses::*;
 use crate::structs::*;
 use crate::tables::*;
 use crate::SQL_TABLES;

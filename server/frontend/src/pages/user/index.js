@@ -27,7 +27,7 @@ export default function Users() {
 
     function User_details(props) {
         return (
-            <a className="user_details_clickable no-text-select underline gryeText" onClick={() => { create_user() }}>Details</a>
+            <a className="user_details_clickable no-text-select underline gryeText" onClick={() => { create_user() }}>details</a>
         )
     }
 

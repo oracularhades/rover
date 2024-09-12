@@ -2,7 +2,7 @@
 FROM --platform=linux/amd64 rust:latest as build-stage
 WORKDIR /rover-server
 
-LABEL org.opencontainers.image.source=https://github.com/oracularhades/guard
+LABEL org.opencontainers.image.source=https://gitlab.com/oracularhades/guard
 
 COPY Cargo.lock /rover-server/Cargo.lock
 COPY Cargo.toml /rover-server/Cargo.toml

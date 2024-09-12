@@ -33,8 +33,8 @@ export default function Network() {
                 response.data.forEach(element => {
                     // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
                     let obj = {
-                        "device name": <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link>,
-                        "user": <p><Link href={`/user/${element.user.id}`}>josh@motionfans.com</Link> (unix_example)</p>,
+                        "device name": element.device && <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link> || null,
+                        "user": element.user && <p><Link href={`/user/${element.user.id}`}>{element.user.email}</Link> ({element.user.system_user})</p> || null,
                         domain: element.domain,
                         ip_address: element.ip_address,
                         "IP Country": <div><span class={`flag-${element.destination_country.toLowerCase()}`}/> {element.destination_country}</div>,
@@ -88,7 +88,7 @@ export default function Network() {
                 <h2>Network</h2>
                 {network.length > 0 && <Table1 data={network}/>}
                 {network.length == 0 && <div>
-                    <No_results tip="Setup network logging" tip_href="https://github.com/oracularhades/rover/wiki/Setup-network-logging"/>
+                    <No_results tip="Setup network logging" tip_href="https://gitlab.com/oracularhades/rover/wiki/Setup-network-logging"/>
                 </div>}
             </Home1>
         </div>

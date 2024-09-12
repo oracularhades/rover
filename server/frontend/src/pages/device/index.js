@@ -54,7 +54,7 @@ export default function Devices() {
         <Home1 className="home_padding default_row_gap">
             <h2>Devices</h2>
             {devices.length >= 0 && devices_ul}
-            {devices.length == 0 && <No_results tip="Enroll a device" tip_href="https://github.com/oracularhades/rover/wiki/Enroll-a-device"/>}
+            {devices.length == 0 && <No_results tip="Enroll a device" tip_href="https://gitlab.com/oracularhades/rover/wiki/Enroll-a-device"/>}
         </Home1>
     )
 }

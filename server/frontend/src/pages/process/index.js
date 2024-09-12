@@ -35,8 +35,8 @@ export default function Processes() {
                     // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
                     let obj = {
                         // id: user.id,
-                        "device name": <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link>,
-                        "user": <p><Link href={`/user/${element.user.id}`}>josh@motionfans.com</Link> (unix_example)</p>,
+                        "device name": element.device && <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link> || null,
+                        "user": element.user && <p><Link href={`/user/${element.user.id}`}>{element.user.email}</Link> ({element.user.system_user})</p> || null,
                         process: element.process,
                         pathname: element.pathname,
                         publisher: element.publisher,
@@ -92,7 +92,7 @@ export default function Processes() {
             <h2>Processes</h2>
             {processes.length > 0 && <Table1 data={processes}/>}
             {processes.length == 0 && <div>
-                <No_results tip="Setup process management" tip_href="https://github.com/oracularhades/rover/wiki/Setup-process-management"/>
+                <No_results tip="Setup process management" tip_href="https://gitlab.com/oracularhades/rover/wiki/Setup-process-management"/>
             </div>}
         </Home1>
     )

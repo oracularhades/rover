@@ -25,3 +25,7 @@
 .device_grid .backdrop_content {
     height: 400px;
 }
+
+.default_row_gap {
+    row-gap: 6px;
+}

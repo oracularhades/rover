@@ -23,8 +23,16 @@ pub async fn network_list(params: &Query_string) -> Custom<Value> {
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
 
-    let network_result: Vec<Rover_network> = sql_query(format!("SELECT device_id, domain, ip_address, destination_country, destination_registrant, protocol, size, info, created FROM {} ORDER BY created DESC", sql.network.unwrap()))
-    .load::<Rover_network>(&mut db)
+    let network_result: Vec<(Rover_network, Option<Rover_devices>, Option<Rover_users>)> = rover_network::table
+    .left_join(crate::tables::rover_devices::dsl::rover_devices.on(crate::tables::rover_devices::dsl::id.nullable().eq(crate::tables::rover_network::dsl::device_id.nullable())))
+    .left_join(crate::tables::rover_users::dsl::rover_users.on(crate::tables::rover_users::dsl::id.nullable().eq(crate::tables::rover_devices::dsl::user_id.nullable())))
+    .order(rover_network::created.desc())
+    .select((
+        rover_network::all_columns,
+        rover_devices::all_columns.nullable(),
+        rover_users::all_columns.nullable(),
+    ))
+    .load::<(Rover_network, Option<Rover_devices>, Option<Rover_users>)>(&mut *db)
     .expect("Something went wrong querying the DB.");
 
     let mut network_public: Vec<Rover_network_data_for_admins> = network_result

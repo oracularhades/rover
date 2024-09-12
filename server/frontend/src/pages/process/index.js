@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";
 import { creds } from "@/global";
 import LoadingSpinner from "@/components/miscellaneous/loadingspinner";
+import Link from "next/link";
 
 export default function Processes() {
     const should_run = useRef(true);
@@ -29,7 +30,29 @@ export default function Processes() {
         try {
             const response = await Rover(creds()).process.list();
             if (response.ok == true) {
-                set_processes(response.data);
+                let data = [];
+                response.data.forEach(element => {
+                    // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
+                    let obj = {
+                        // id: user.id,
+                        "device name": <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link>,
+                        "user": <p><Link href={`/user/${element.user.id}`}>josh@motionfans.com</Link> (unix_example)</p>,
+                        process: element.process,
+                        pathname: element.pathname,
+                        publisher: element.publisher,
+                        "is user admin?": element.admin_user,
+                        "is process admin?": element.is_admin_process,
+                        created: element.created,
+                        "last seen": element.last_seen,
+                        // hash: element.hash,
+                        // size: element.size,
+                        // threads: element.threads
+                    };
+
+                    data.push(obj);
+                });
+
+                set_processes(data);
                 set_loading(false);
             }
         } catch (error) {
@@ -58,22 +81,19 @@ export default function Processes() {
 
     if (loading == true) {
         return (
-            <div className="frame_div">
-                <Home1 className="home_padding align_items_center">
-                    <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
-                </Home1>
-            </div>
+            <Home1 className="home_padding align_items_center">
+                <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
+            </Home1>
         )
     }
 
     return (
-        <div className="frame_div">
-            <Home1 className="home_padding align_items_center">
-                {processes.length > 0 && <Table1 data={processes}/>}
-                {processes.length == 0 && <div>
-                    <No_results tip="Setup process management" tip_href="https://github.com/oracularhades/rover/wiki/Setup-process-management"/>
-                </div>}
-            </Home1>
-        </div>
+        <Home1 className="home_padding default_row_gap">
+            <h2>Processes</h2>
+            {processes.length > 0 && <Table1 data={processes}/>}
+            {processes.length == 0 && <div>
+                <No_results tip="Setup process management" tip_href="https://github.com/oracularhades/rover/wiki/Setup-process-management"/>
+            </div>}
+        </Home1>
     )
 }

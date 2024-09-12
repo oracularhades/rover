@@ -44,20 +44,17 @@ export default function Devices() {
 
     if (loading == true) {
         return (
-            <div className="frame_div">
-                <Home1 className="home_padding align_items_center">
-                    <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
-                </Home1>
-            </div>
+            <Home1 className="home_padding align_items_center">
+                <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
+            </Home1>
         )
     }
 
     return (
-        <div className="frame_div">
-            <Home1 className="home_padding">
-                {devices.length >= 0 && devices_ul}
-                {devices.length == 0 && <No_results tip="Enroll a device" tip_href="https://github.com/oracularhades/rover/wiki/Enroll-a-device"/>}
-            </Home1>
-        </div>
+        <Home1 className="home_padding default_row_gap">
+            <h2>Devices</h2>
+            {devices.length >= 0 && devices_ul}
+            {devices.length == 0 && <No_results tip="Enroll a device" tip_href="https://github.com/oracularhades/rover/wiki/Enroll-a-device"/>}
+        </Home1>
     )
 }

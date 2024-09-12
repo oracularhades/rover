@@ -7,6 +7,7 @@ import { creds, to_table } from "../global";
 import LoadingSpinner from "@/components/miscellaneous/loadingspinner";
 import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";
+import Link from "next/link";
 
 export default function Network() {
     const should_run = useRef(true);
@@ -28,7 +29,26 @@ export default function Network() {
         try {
             const response = await Rover(creds()).network.list();
             if (response.ok == true) {
-                set_network(response.data);
+                let data = [];
+                response.data.forEach(element => {
+                    // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
+                    let obj = {
+                        "device name": <Link href={`/device/${element.device.id}`}>{element.device.alias}</Link>,
+                        "user": <p><Link href={`/user/${element.user.id}`}>josh@motionfans.com</Link> (unix_example)</p>,
+                        domain: element.domain,
+                        ip_address: element.ip_address,
+                        "IP Country": <div><span class={`flag-${element.destination_country.toLowerCase()}`}/> {element.destination_country}</div>,
+                        "IP Registrant": element.destination_registrant,
+                        protocol: element.protocol,
+                        size: element.size,
+                        created: element.created,
+                        // info: element.info
+                    };
+
+                    data.push(obj);
+                });
+
+                set_network(data);
                 set_loading(false);
             }
         } catch (error) {
@@ -39,11 +59,9 @@ export default function Network() {
 
     if (loading == true) {
         return (
-            <div className="frame_div">
-                <Home1 className="home_padding align_items_center">
-                    <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
-                </Home1>
-            </div>
+            <Home1 className="home_padding align_items_center">
+                <LoadingSpinner speed="600ms" style={{ width: 15, height: 15 }}/>
+            </Home1>
         )
     }
 
@@ -65,8 +83,9 @@ export default function Network() {
 
     return (
         <div className="frame_div">
-            <Home1 className="home_padding align_items_center">
+            <Home1 className="home_padding default_row_gap">
                 {/* <Network_traffic_Component/> */}
+                <h2>Network</h2>
                 {network.length > 0 && <Table1 data={network}/>}
                 {network.length == 0 && <div>
                     <No_results tip="Setup network logging" tip_href="https://github.com/oracularhades/rover/wiki/Setup-network-logging"/>

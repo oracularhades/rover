@@ -26,11 +26,6 @@ pub async fn device_list(params: &Query_string) -> Custom<Value> {
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
 
-    // let devices_result: Vec<Rover_devices> = sql_query(format!("SELECT id, user_id, created, active, compliant, os_type, os_version, alias, public_key FROM {} WHERE location=? ORDER BY created DESC", sql.device.unwrap()))
-    // .bind::<Text, _>("onboard_client".to_string())
-    // .load::<Rover_devices>(&mut *db)
-    // .expect("Something went wrong querying the DB.");
-
     let devices_result: Vec<Rover_devices> = rover_devices::table
     .filter(rover_devices::location.eq("onboard_client"))
     .order(rover_devices::created.desc())

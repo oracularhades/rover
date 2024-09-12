@@ -195,7 +195,8 @@ pub struct Rover_network {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Rover_network_data_for_admins {
-    pub device_id: String,
+    pub device: Option<Rover_devices_data_for_admins>,
+    pub user: Option<Rover_users_data_for_admins>,
     pub domain: String,
     pub ip_address: String,
     pub destination_country: String,
@@ -206,10 +207,11 @@ pub struct Rover_network_data_for_admins {
     pub created: Option<i64>,
 }
 
-impl From<Rover_network> for Rover_network_data_for_admins {
-    fn from(network: Rover_network) -> Self {
+impl From<(Rover_network, Option<Rover_devices>, Option<Rover_users>)> for Rover_network_data_for_admins {
+    fn from((network, device, user): (Rover_network, Option<Rover_devices>, Option<Rover_users>)) -> Self {
         Rover_network_data_for_admins {
-            device_id: network.device_id,
+            device: device.map(|d| d.into()),
+            user: user.map(|d| d.into()),
             domain: network.domain,
             ip_address: network.ip_address,
             destination_country: network.destination_country,
@@ -243,10 +245,10 @@ pub struct Rover_processes {
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Rover_processes_data_for_admins {
-    pub device_id: String,
+    pub device: Option<Rover_devices_data_for_admins>,
+    pub user: Option<Rover_users_data_for_admins>,
     pub process: Option<String>,
     pub last_seen: Option<i64>,
-    pub user: Option<String>,
     pub admin_user: Option<bool>,
     pub is_admin_process: Option<bool>,
     pub PID: Option<i64>,
@@ -255,17 +257,16 @@ pub struct Rover_processes_data_for_admins {
     pub threads: Option<i64>,
     pub size: Option<i64>,
     pub pathname: Option<String>,
-    pub created: Option<i64>,
-    pub device: Option<Rover_devices>
+    pub created: Option<i64>
 }
 
-impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for_admins {
-    fn from((process, device): (Rover_processes, Option<Rover_devices>)) -> Self {
+impl From<(Rover_processes, Option<Rover_devices>, Option<Rover_users>)> for Rover_processes_data_for_admins {
+    fn from((process, device, user): (Rover_processes, Option<Rover_devices>, Option<Rover_users>)) -> Self {
         Rover_processes_data_for_admins {
-            device_id: process.device_id,
+            device: device.map(|d| d.into()),
+            user: user.map(|d| d.into()),
             process: process.process,
             last_seen: process.last_seen,
-            user: process.user,
             admin_user: process.admin_user,
             is_admin_process: process.is_admin_process,
             PID: process.PID,
@@ -274,8 +275,7 @@ impl From<(Rover_processes, Option<Rover_devices>)> for Rover_processes_data_for
             threads: process.threads,
             size: process.size,
             pathname: process.pathname,
-            created: process.created,
-            device: device.map(|d| d)
+            created: process.created
         }
     }
 }

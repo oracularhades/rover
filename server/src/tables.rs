@@ -76,4 +76,4 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(rover_devices, rover_processes);
+diesel::allow_tables_to_appear_in_same_query!(rover_users, rover_devices, rover_network, rover_processes);

@@ -6,3 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+sysinfo = { version = "0.31.4", path = "temp-crate-storage/sysinfo-master" }
+once_cell = "1.19.0"
+tokio-tungstenite = { version = "0.23.1", features = ["native-tls"] }
+futures-util = "0.3.30"
+tokio = { version = "1.40.0", features = ["full"] }
+hades_auth = "0.1.4"
+serde = "1.0.196"
+serde_json = "1.0.117"
+security-framework = { version = "3.0.0", path = "temp-crate-storage/security-framework" }

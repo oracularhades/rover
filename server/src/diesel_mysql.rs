@@ -37,22 +37,6 @@ use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{self, ConnectionManager};
 use std::sync::Arc;
 
-// #[delete("/<id>")]
-// async fn delete(mut db: Connection<Db>, id: i64) -> Result<Option<()>> {
-//     let affected = diesel::delete(posts::table)
-//         .filter(posts::id.eq(id))
-//         .execute(&mut db)
-//         .await?;
-
-//     Ok((affected == 1).then(|| ()))
-// }
-
-// #[delete("/")]
-// async fn destroy(mut db: Connection<Db>) -> Result<()> {
-//     diesel::delete(posts::table).execute(&mut db).await?;
-//     Ok(())
-// }
-
 #[options("/<_..>")]
 fn options_handler() -> &'static str {
     ""

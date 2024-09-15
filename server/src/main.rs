@@ -1,5 +1,4 @@
 #[macro_use] extern crate rocket;
-// #[macro_use] extern crate rocket_sync_db_pools;
 
 // #[cfg(test)] mod tests;
 pub struct Cors;
@@ -22,19 +21,21 @@ pub mod endpoint {
     pub mod user;
 }
 
-// use diesel::r2d2;
-// use diesel::r2d2::ConnectionManager;
-// use diesel::r2d2::Pool;
-// use diesel::mysql::MysqlConnection;
+pub mod websocket {
+    pub mod connection;
+    pub mod event;
+}
 
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::Header;
 use rocket::{Request, Response, request, request::FromRequest};
+use websocket::connection::handle_connection;
 
 use std::error::Error;
 use std::fs;
 use std::collections::HashMap;
 use std::env;
+use std::sync::Arc;
 
 use once_cell::sync::Lazy;
 use toml::Value;
@@ -47,6 +48,16 @@ use diesel::MysqlConnection;
 use diesel::prelude::*;
 use diesel::sql_types::*;
 use diesel::r2d2::{self, ConnectionManager};
+
+use tokio::net::{TcpListener, TcpStream};
+use tokio::sync::{mpsc, Mutex, watch};
+use tokio_tungstenite::{accept_async, tungstenite::protocol::Message, tungstenite::protocol::CloseFrame};
+use futures_util::{StreamExt, SinkExt};
+
+pub static CHANNEL: Lazy<(Mutex<mpsc::UnboundedSender<Message>>, Mutex<mpsc::UnboundedReceiver<Message>>)> = Lazy::new(|| {
+    let (tx, rx) = mpsc::unbounded_channel(); // Use tokio's mpsc::channel instead of std::sync
+    (Mutex::new(tx), Mutex::new(rx))
+});
 
 // Create a type alias for the connection pool
 type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
@@ -76,24 +87,9 @@ fn get_config() -> Result<Value, Box<dyn Error>> {
         config_value = val;
     } else {
         return Err("Missing \"rover_config\" environment variable".into());
-        // ROCKET_DATABASES is not set
     }
 
-    // let contents = fs::read_to_string("./config.toml")
-    //     .expect("Should have been able to read the file");
-
     let config: Value = toml::from_str(&config_value).unwrap();
-
-    // let value = contents.parse::<toml::Value>().expect("lmao");
-    // let table = value.as_table().unwrap();
-    // let auth_methods = table.get("authentication_methods").unwrap().as_table().unwrap();
-
-    // let mut valid: Option<AuthMethod> = None;
-    // for (key, value) in auth_methods {
-    //     if (key.to_string() == id) {
-    //         valid = Some(serde_json::from_str(&value.to_string()).expect(&format!("Failed to parse authentication method: {}", key)));
-    //     }
-    // }
 
     Ok(config)
 }
@@ -124,6 +120,19 @@ async fn rocket() -> _ {
     let (unsafe_do_not_use_sql_tables, unsafe_do_not_use_raw_sql_tables) = get_sql_tables().unwrap();
     validate_sql_table_inputs(unsafe_do_not_use_raw_sql_tables).await.expect("Config validation failed.");
 
+    // Bind the TCP listener to the address
+    let addr = "127.0.0.1:8080".to_string();
+    let listener = TcpListener::bind(&addr).await.expect("Failed to bind");
+
+    println!("Listening on: {}", addr);
+
+    tokio::spawn(async move {
+        // Accept incoming connections
+        while let Ok((stream, _)) = listener.accept().await {
+            tokio::spawn(handle_connection(stream));
+        }
+    });
+    
     let figment = rocket::Config::figment();
 
     rocket::custom(figment)

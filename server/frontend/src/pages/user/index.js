@@ -42,8 +42,8 @@ export default function Users() {
                     // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
                     let user_obj = {
                         // id: user.id,
-                        first_name: user.first_name,
-                        last_name: user.last_name,
+                        "first name": user.first_name,
+                        "last name": user.last_name,
                         email: user.email,
                         permission: user.permission && user.permission != 0 && user.permission || "standard"
                     };

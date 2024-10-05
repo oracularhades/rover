@@ -21,7 +21,7 @@ pub async fn device_list(params: &Query_string) -> Custom<Value> {
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/device/list", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/device/list").await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
@@ -43,11 +43,43 @@ pub async fn device_list(params: &Query_string) -> Custom<Value> {
     }))
 }
 
+#[get("/get?<id>")]
+pub async fn device_get(params: &Query_string, id: Option<String>) -> Custom<Value> {
+    if (id.is_none() == true) {
+        return status::Custom(Status::BadRequest, error_message("params.id is null or whitespace."));
+    }
+
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
+    let sql: Config_sql = (&*SQL_TABLES).clone();
+
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/device/get").await {
+        Ok(data) => data,
+        Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
+    };
+
+    let devices_result: Vec<Rover_devices> = rover_devices::table
+    .filter(rover_devices::id.eq(id.unwrap()))
+    .filter(rover_devices::location.eq("onboard_client"))
+    .order(rover_devices::created.desc())
+    .load::<Rover_devices>(&mut *db)
+    .expect("Something went wrong querying the DB.");
+
+    let mut devices_public: Vec<Rover_devices_data_for_admins> = devices_result
+    .into_iter()
+    .map(Rover_devices_data_for_admins::from)
+    .collect();
+
+    status::Custom(Status::Ok, json!({
+        "ok": true,
+        "data": devices_public
+    }))
+}
+
 // #[post("/update", format = "application/json", data = "<body>")]
 // pub async fn device_update(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
 //     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
+//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, Some(params), "/process/list").await {
 //         Ok(data) => data,
 //         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
 //     };
@@ -68,7 +100,7 @@ pub async fn device_list(params: &Query_string) -> Custom<Value> {
 // pub async fn device_onboard(mut db: Connection<Db>, mut body: &str, params: &Query_string) -> Custom<Value> {
 //     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, params, "/process/list", false).await {
+//     let request_authentication_output: Request_authentication_output = match request_authentication(db, None, Some(params), "/process/list").await {
 //         Ok(data) => data,
 //         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
 //     };

@@ -1,3 +1,4 @@
+use hades_auth::static_auth_sign;
 use serde_json::{json, Value};
 use futures_util::{StreamExt, SinkExt};
 use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
@@ -6,7 +7,10 @@ use tokio::select;
 
 use std::sync::Arc;
 
+use crate::structs::credential::Credential;
 use crate::CHANNEL;
+
+use super::object::merge;
 
 pub async fn websocket_connect_feed_channel(host: &str) {
     let (ws_stream, _) = connect_async(host.clone()).await.expect("Failed to connect");
@@ -53,11 +57,17 @@ pub async fn websocket_connect_feed_channel(host: &str) {
     }
 }
 
-pub fn websocket_event_builder(event: &str, data: &Value, default_data: &Value) -> Value {
+pub async fn websocket_event_builder(event: &str, data: &Value, default_data: &Value, credential: Credential) -> Value {
+    let body = merge(&data, default_data);
+
+    let jwt = static_auth_sign(&credential.private_key, body.clone()).await.expect("Failed to generate static_auth");
+    
     let websocket_event = json!({
-        "default_data": default_data,
-        "data": data,
-        "_system_websocket_event": event
+        "body": serde_json::to_string(&body).unwrap(),
+        "_hades_websocket": json!({
+            "event": event,
+            "jwt": jwt
+        })
     });
 
     return websocket_event;

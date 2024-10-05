@@ -42,7 +42,7 @@ export default function UserCreate1(props) {
 
             <Input_with_header header="Email address" placeholder="user@example.com" value={email} onChange={(e) => { set_email(e.target.value); }}/>
 
-            <p className='user_create_1_note greyText'>Note: Rover does not use passwords. A login email will be sent to user@example.com. Users can also login with external authentication (e.g Microsoft/Google) if an admin chooses.</p>
+            <p className='user_create_1_note greyText'>Note: Rover doesn't use passwords. A login email will be sent to {email} - External authentication via OAuth (e.g Microsoft/Google) is supported provided you enable it.</p>
             <button onClick={() => { user_create(); }}>Create user</button>
         </Dialog_Frame>
     )

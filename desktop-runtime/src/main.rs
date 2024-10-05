@@ -1,6 +1,7 @@
 pub mod globals {
     pub mod credential;
     pub mod macos;
+    pub mod object;
     pub mod websocket;
 }
 
@@ -8,12 +9,12 @@ pub mod structs {
     pub mod credential;
 }
 
-use std::os::unix::process;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 use globals::credential::{credentials_get, credentials_set};
 use globals::macos::{retrieve_password, store_password};
 use globals::websocket::websocket_event_builder;
-use hades_auth::static_auth_sign;
+use hades_auth::{static_auth_sign, Sign};
 use serde_json::{json, Value};
 use sysinfo::{
     Components, Disks, Networks, Process, System
@@ -28,8 +29,7 @@ use futures_util::{StreamExt, SinkExt};
 
 use crate::globals::websocket::websocket_connect_feed_channel;
 
-
-pub static AUTH_DEFAULT_DATA: Lazy<Value> = Lazy::new(|| {
+pub static AUTH_DEFAULT_DATA: Lazy<serde_json::Value> = Lazy::new(|| {
     let credentials = credentials_get();
     
     return json!({
@@ -51,11 +51,9 @@ async fn send_processes(processes: Vec<Value>) {
         "processes": processes
     });
 
-    let additional_metadata = websocket_event_builder("process", &data, &AUTH_DEFAULT_DATA);
-    
-    let credentials = credentials_get();
-    let static_auth = static_auth_sign(&credentials.private_key, additional_metadata).await.expect("Failed to generate static_auth");
-    tx.send(static_auth).unwrap();
+    let additional_metadata = websocket_event_builder("process", &data, &(*AUTH_DEFAULT_DATA).clone(), credentials_get()).await;
+    // let static_auth = Sign((*AUTH_DEFAULT_DATA).clone(), Some(&serde_json::to_string(&additional_metadata).unwrap()), &credentials.private_key, None).await.expect("Failed to generate static_auth");
+    tx.send(serde_json::to_string(&additional_metadata).unwrap()).unwrap();
 }
 
 async fn thing() {
@@ -119,7 +117,7 @@ async fn thing() {
 async fn main() {
     println!("Hello, world!");
 
-    credentials_set("https://rover.internal.motionfans.com".into(), "device_id".into(), "".into());
+    credentials_set("https://rover.internal.motionfans.com".into(), "YPQQKMPRUXQZLMAFWOOQ1726104804819".into(), "MIHuAgEAMBAGByqGSM49AgEGBSuBBAAjBIHWMIHTAgEBBEIATLEtb8HUJ2FzMgH+YSijCZ78Y/iUydG/kVM5PIGrWoj//ZYZtf5jqQiM3CILAYbTjijVlJXUZjmcj5HEGdU6XhChgYkDgYYABAHc2cY50CljTxIoHYrIu+sBaPdD/fUuh+aqNe4crcjWU9OU4DpoXIojHCrCvNlkTv7tsSoiHdw2ck8klAoGQhdYNQFE0FqXn87zi1UgPprTujqF5OovEja7zvF+HLd1g0X5Gaqjny6S/cCUZyvHx4SaBKFRqk2Jva4wT6rwl6BioTIOZQ==".into());
     println!("CREDENTIAL: {:?}", credentials_get());
     tokio::spawn(async move {
         websocket_connect_feed_channel("ws://127.0.0.1:8080").await;

@@ -65,9 +65,9 @@ pub fn stage() -> AdHoc {
         rocket
         .mount("/", FileServer::from(format!("{}/frontend/_static", env::current_dir().expect("Could not get current process directory.").display())))
         .mount("/api", routes![options_handler])
-        .mount("/api/user", routes![crate::endpoint::user::user_list, crate::endpoint::user::user_update])
+        .mount("/api/user", routes![crate::endpoint::user::user_list, crate::endpoint::user::user_get, crate::endpoint::user::user_update])
         .mount("/api/network", routes![crate::endpoint::network::network_list])
         .mount("/api/process", routes![crate::endpoint::process::process_list])
-        .mount("/api/device", routes![crate::endpoint::device::device_list])
+        .mount("/api/device", routes![crate::endpoint::device::device_list, crate::endpoint::device::device_get])
     })
 }

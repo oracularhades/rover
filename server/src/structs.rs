@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use serde_json::Value;
 use crate::tables::*;
 use rocket::serde::{Serialize, Deserialize};
 use diesel::r2d2::{self, ConnectionManager};
@@ -53,6 +54,7 @@ pub struct Query_string(pub String);
 
 pub struct Request_authentication(pub Option<Request_authentication_output>);
 
+#[derive(Clone, Debug, Deserialize)]
 pub struct Request_authentication_output {
     // pub returned_connection: &MysqlConnection,
     // #[derive(Clone, Debug, Deserialize)]
@@ -229,13 +231,37 @@ impl From<(Rover_network, Option<Rover_devices>, Option<Rover_users>)> for Rover
 #[diesel(table_name = rover_processes)]
 pub struct Rover_processes {
     pub device_id: String,
+    pub PID: Option<i64>,
     pub process: Option<String>,
-    pub last_seen: Option<i64>,
     pub user: Option<String>,
     pub admin_user: Option<bool>,
     pub is_admin_process: Option<bool>,
-    pub PID: Option<i64>,
     pub publisher: Option<String>,
+    pub hash: Option<String>,
+    pub threads: Option<i64>,
+    pub size: Option<i64>,
+    pub pathname: Option<String>,
+    pub last_seen: Option<i64>,
+    pub created: Option<i64>
+}
+
+// Websocket_event_process
+#[derive(Debug, Clone, Deserialize)]
+pub struct Websocket_event_process {
+    pub processes: Vec<Websocket_event_process_item>
+}
+
+// Websocket_event_process
+#[derive(Debug, Clone, Deserialize)]
+pub struct Websocket_event_process_item {
+    pub pid: Option<i64>,
+    pub parent: Option<i64>,
+    pub name: Option<String>,
+    pub path: Option<String>,
+    pub current_working_directory: Option<String>,
+    pub status: Option<String>,
+    pub run_time: Option<i64>,
+    pub start_time: Option<i64>,
     pub hash: Option<String>,
     pub threads: Option<i64>,
     pub size: Option<i64>,
@@ -289,4 +315,16 @@ pub struct Login_code_record {
     pub created: Option<i64>,
     pub attempts: Option<i64>,
     pub user_id: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Websocket_event_hades_websocket {
+    pub event: Option<String>,
+    pub jwt: Option<String>
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Websocket_event {
+    pub body: Option<String>,
+    pub _hades_websocket: Option<Websocket_event_hades_websocket>
 }

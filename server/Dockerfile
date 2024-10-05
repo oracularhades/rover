@@ -48,7 +48,7 @@ WORKDIR /rover-server
 
 ENV PATH="/home/linuxbrew/.cargo/bin:${PATH}"
 
-RUN curl -Lo /rover-server/guard.zip https://gitlab.com/oracularhades/guard/-/jobs/artifacts/main/raw/guard.zip?job=build
+RUN curl -Lo /rover-server/guard.zip https://gitlab.com/oracularhades/guard/-/jobs/artifacts/main/raw/guard.zip?job=build_rust_binary
 RUN unzip -d /rover-server/guard /rover-server/guard.zip
 # RUN chmod +x /rover-server/guard/rover-server
 

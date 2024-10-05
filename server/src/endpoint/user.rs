@@ -18,7 +18,7 @@ pub async fn user_list(params: &Query_string) -> Custom<Value> {
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/list", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/list").await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
@@ -38,12 +38,42 @@ pub async fn user_list(params: &Query_string) -> Custom<Value> {
     }))
 }
 
+#[get("/get?<id>")]
+pub async fn user_get(params: &Query_string, id: Option<String>) -> Custom<Value> {
+    if (id.is_none() == true) {
+        return status::Custom(Status::BadRequest, error_message("params.id is null or whitespace."));
+    }
+
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
+    let sql: Config_sql = (&*SQL_TABLES).clone();
+
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/get").await {
+        Ok(data) => data,
+        Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
+    };
+
+    let user_result: Vec<Rover_users> = sql_query(format!("SELECT id, first_name, last_name, email, permission FROM {} WHERE id=? ORDER BY created DESC", sql.user.unwrap()))
+    .bind::<Text, _>(id.unwrap())
+    .load::<Rover_users>(&mut db)
+    .expect("Something went wrong querying the DB.");
+
+    let mut user_public: Vec<Rover_users_data_for_admins> = user_result
+    .into_iter()
+    .map(Rover_users_data_for_admins::from)
+    .collect();
+
+    status::Custom(Status::Ok, json!({
+        "ok": true,
+        "data": user_public
+    }))
+}
+
 #[post("/update", format = "application/json", data = "<body>")]
 pub async fn user_update(params: &Query_string, mut body: Json<User_update_body>) -> Custom<Value> {
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/update", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/user/update").await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };

@@ -88,12 +88,14 @@ export default function Processes() {
     }
 
     return (
-        <Home1 className="home_padding default_row_gap">
+        <Home1 className="home_padding default_row_gap scrollY">
             <h2>Processes</h2>
-            {processes.length > 0 && <Table1 data={processes}/>}
-            {processes.length == 0 && <div>
-                <No_results tip="Setup process management" tip_href="https://gitlab.com/oracularhades/rover/wiki/Setup-process-management"/>
-            </div>}
+            <div className="body">
+                {processes.length > 0 && <Table1 data={processes}/>}
+                {processes.length == 0 && <div>
+                    <No_results tip="Setup process management" tip_href="https://gitlab.com/oracularhades/rover/wiki/Setup-process-management"/>
+                </div>}
+            </div>
         </Home1>
     )
 }

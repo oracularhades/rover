@@ -18,7 +18,7 @@ pub async fn network_list(params: &Query_string) -> Custom<Value> {
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
-    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/network/list", false).await {
+    let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/network/list").await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };

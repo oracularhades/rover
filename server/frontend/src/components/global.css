@@ -180,3 +180,15 @@ a {
   row-gap: 4px;
   width: 100%;
 }
+
+.body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.scrollY {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

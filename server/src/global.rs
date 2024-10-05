@@ -18,7 +18,7 @@ use lettre::message::header::ContentType;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 
-use hades_auth::authenticate;
+use hades_auth::{authenticate, static_auth_verify};
 
 pub fn generate_random_id() -> String {
     let mut random_string = String::new();
@@ -46,7 +46,7 @@ pub fn is_null_or_whitespace(data: Option<String>) -> bool {
     }
 }
 
-pub async fn request_authentication(body: Option<String>, params: &Query_string, pathname: &str, use_cropped_body: bool) -> Result<Request_authentication_output, Box<dyn Error>> {
+pub async fn request_authentication(body: Option<String>, params: &Query_string, pathname: &str) -> Result<Request_authentication_output, Box<dyn Error>> {
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
 
     let mut params_object: HashMap<String, String> = HashMap::new();
@@ -84,7 +84,8 @@ pub async fn request_authentication(body: Option<String>, params: &Query_string,
     let result: Option<Rover_devices> = rover_devices::table
         .filter(rover_devices::id.eq(&device_id))
         .first(&mut db)
-        .optional().expect("Something went wrong querying the DB1.");
+        .optional()
+        .expect("Something went wrong querying the DB1.");
 
     println!("4");
 
@@ -115,6 +116,38 @@ pub async fn request_authentication(body: Option<String>, params: &Query_string,
     return Ok(Request_authentication_output {
         // returned_connection: db,
         device_id: device_id,
+        user_id: user_id
+    });
+}
+
+pub async fn request_authentication_staticauth(jwt: Option<&str>, device_id: Option<&str>) -> Result<Request_authentication_output, Box<dyn Error>> {
+    let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
+    let device_id_unwrapped = device_id.expect("Missing deviceid.");
+
+    let result: Option<Rover_devices> = rover_devices::table
+        .filter(rover_devices::id.eq(&device_id_unwrapped))
+        .first(&mut db)
+        .optional().expect("Something went wrong querying the DB1.");
+
+    if (result.is_none()) {
+        return Err("Authentication failed [device doesn't exist]".into())
+    }
+
+    let device = result.unwrap();
+
+    let public_key = device.public_key;
+    let user_id = device.user_id;
+
+    static_auth_verify(
+        jwt.expect("Missing jwt").to_string(),
+        public_key
+    ).await.expect("Authentication failed");
+
+    println!("Auth didn't fail");
+
+    return Ok(Request_authentication_output {
+        // returned_connection: db,
+        device_id: device_id_unwrapped.to_string(),
         user_id: user_id
     });
 }

@@ -52,17 +52,17 @@ diesel::table! {
 diesel::table! {
     rover_processes (device_id) {
         device_id -> Text,
+        PID -> Nullable<BigInt>,
         process -> Nullable<Text>,
-        last_seen ->  Nullable<BigInt>,
         user -> Nullable<Text>,
         admin_user -> Nullable<Bool>,
         is_admin_process -> Nullable<Bool>,
-        PID -> Nullable<BigInt>,
         publisher -> Nullable<Text>,
         hash -> Nullable<Text>,
         threads ->  Nullable<BigInt>,
         size ->  Nullable<BigInt>,
         pathname -> Nullable<Text>,
+        last_seen ->  Nullable<BigInt>,
         created -> Nullable<BigInt>
     }
 }

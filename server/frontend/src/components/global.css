@@ -192,3 +192,9 @@ a {
   flex-direction: column;
   height: 100%;
 }
+
+.components_ul {
+  display: flex;
+  flex-direction: column;
+  row-gap: 6px;
+}

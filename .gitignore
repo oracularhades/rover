@@ -30,3 +30,4 @@
 /server/target
 node_modules
 /server/frontend/_static
+server/.DS_Store

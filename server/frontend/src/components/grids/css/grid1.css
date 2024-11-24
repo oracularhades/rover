@@ -12,10 +12,3 @@
     grid-template-columns: repeat(auto-fit, minmax(286px, 1fr));
     overflow-y: scroll;
 }
-
-.wrapper {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    grid-auto-rows: minmax(100px, auto);
-}

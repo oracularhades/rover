@@ -1,0 +1,63 @@
+.user_component {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    color: inherit;
+}
+
+.user_component_left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 6px;
+
+    text-align: start;
+    box-shadow: unset;
+    padding: 0px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    
+    width: 100%;
+    height: 100%;
+
+    color: inherit;
+}
+
+.user_component_icon {
+    width: 25px;
+    height: 25px;
+}
+
+.user_component_metadata {
+    display: flex;
+    flex-direction: column;
+}
+
+.user_component_metadata_alias {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.user_component_metadata_device_type {
+    font-size: 11px;
+}
+
+.user_component_right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 4px;
+}
+
+.right_button {
+    padding: 4px;
+}
+
+.right_button img {
+    width: 20px;
+    height: 20px;
+}

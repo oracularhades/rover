@@ -2,7 +2,6 @@ import "./css/users.css";
 import "@/styles/global.css";
 import "@/styles/flags.css";
 import Home1 from "@/components/home/home";
-import Table1 from "@/components/tables/table1/table1";
 import { creds } from "../../global";
 import TopbarPage1 from "@/components/internal_components/topbar/page/topbar-page1";
 import UserCreate1 from "@/components/internal_components/user/dialog/user-create1";
@@ -10,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { Rover } from "@oracularhades/rover";
 import No_results from "@/components/tip/no_results";
 import LoadingSpinner from "@/components/miscellaneous/loadingspinner";
+import User_Component from "@/components/internal_components/user/user_component";
 
 export default function Users() {
     const should_run = useRef(true);
@@ -37,22 +37,7 @@ export default function Users() {
         try {
             const response = await Rover(creds()).user.list();
             if (response.ok == true) {
-                let user_data = [];
-                response.data.forEach(user => {
-                    // This forEach was originally for adding the options column, but here we'll just make another object so we can order the keys correctly, without some annoyingly over the top code. It does mean any values returned from the server have to be added here in future versions, but that's a problem for future me to write code to fix.
-                    let user_obj = {
-                        // id: user.id,
-                        "first name": user.first_name,
-                        "last name": user.last_name,
-                        email: user.email,
-                        permission: user.permission && user.permission != 0 && user.permission || "standard"
-                    };
-
-                    user_obj.options = <User_details data={user}/>
-
-                    user_data.push(user_obj);
-                });
-                set_users(user_data);
+                set_users(response.data);
                 set_loading(false);
             }
         } catch (error) {
@@ -78,6 +63,12 @@ export default function Users() {
         document.getElementById("user_create_1").showModal();
     }
 
+    const users_ul = users.map((data) => {
+        return (
+            <User_Component data={data}/>
+        )
+    });
+
     return (
         <Home1 className="default_row_gap home_padding">
             <UserCreate1 on_success={user_created} id="user_create_1"/>
@@ -85,7 +76,10 @@ export default function Users() {
                 <h2>Users</h2>
                 <button onClick={() => { create_user() }}>Create user</button>
             </TopbarPage1>
-            {users.length > 0 && <Table1 data={users}/>}
+            <div className="components_ul">
+                {users.length >= 0 && users_ul}
+            </div>
+            {/* {users.length > 0 && <Table1 data={users}/>} */}
             {/* note to self: need a way to update a user's permisisons, probably adding tabs between user actions and content boxes. So content boxes are under "overview" and you can get more specific. */}
             {users.length == 0 && <div className="align_items_center">
                 <No_results/>

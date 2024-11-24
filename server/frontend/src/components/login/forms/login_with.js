@@ -9,7 +9,7 @@ export default function Login_With(props) {
     
     return (
         <a href={href} className='login_with'><button disabled={props.disabled}>
-            <img src={props.icon}/>
+            <img alt={`"${props.service}"'s logo`} src={props.icon}/>
             <p>Login with {props.service}</p>
         </button></a>
     )

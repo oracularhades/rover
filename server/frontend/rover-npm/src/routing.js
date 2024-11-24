@@ -1,4 +1,18 @@
+import { getCreds } from "./index.js";
+
 function getRoverApiURL() {
+    const creds = getCreds();
+    if (creds.host) {
+        let host = new URL(creds.host);
+        host.search = '';
+
+        return host;
+    }
+
+    if (typeof window == "undefined") {
+        throw "You must specify credentials.host. If you were in a browser, we'd just automatically infer the host from your pathname, but it doesn't look like you're in a browser."
+    }
+
     let url = new URL(window.location.href);
     url.port = window.location.port;
     url.pathname = "/api";

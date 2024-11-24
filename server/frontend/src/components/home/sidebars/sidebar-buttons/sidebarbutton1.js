@@ -6,7 +6,7 @@ export default function SidebarButton1(props) {
     return (
         <ToolTip text={props.alias}><Link href={props.href} className="Sidebarbutton">
             <button>
-                {props.icon && <img src={props.icon}/>}
+                {props.icon && <img src={props.icon} {...props}/>}
                 {props.children && props.children}
             </button>
         </Link></ToolTip>

@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 .align_items_center {
@@ -28,4 +29,12 @@
 
 .default_row_gap {
     row-gap: 6px;
+}
+
+.processes_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
 }

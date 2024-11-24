@@ -3,7 +3,7 @@ import { Rover, getCreds } from "./index.js";
 import { getRoverApiURL } from "./routing.js";
 
 async function list() {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/list`, {
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/list`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
@@ -21,7 +21,7 @@ async function list() {
 }
 
 async function get(id) {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/get?${general().objectToParams({ id })}`, {
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/get?${general().objectToParams({ id })}`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
@@ -44,7 +44,16 @@ async function create(data) {
 }
 
 async function update(data) {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/update?${general().objectToParams({ id: data.id })}`, {
+    // if (!data.action) {
+    //     data.action = "update";
+    // }
+
+    console.log("ROZZ", data.action, JSON.stringify({
+        ...data,
+        action: data.action ? data.action : "update"
+    }));
+
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/user/update?${general().objectToParams({ id: data.id })}`, {
         method: 'POST',
         mode: 'cors',
         cache: 'default',
@@ -54,7 +63,10 @@ async function update(data) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+            ...data,
+            action: data.action ? data.action : "update"
+        })
     })
     
     const response_data = response.json();

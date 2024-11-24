@@ -113,19 +113,30 @@ pub async fn user_update(params: &Query_string, mut body: Json<User_update_body>
     let permission = body.permission.clone().expect("missing body.permission");
 
     let mut user_id = generate_random_id();
-    // let number: i32 = rand::thread_rng().gen_range(0..999999);
+
+    // Check if a user with the provided email already exists, we do not want duplicate emails.
+    // TODO: this should be a function, such as user_get().
+    let user_email_check: Option<Rover_users> = rover_users::table
+    .filter(rover_users::id.eq(email.clone()))
+    .first(&mut db)
+    .optional()
+    .expect("Something went wrong querying the DB.");
+
+    if (user_email_check.is_none() == false) {
+        return status::Custom(Status::BadRequest, error_message(&format!("'{}' is already a user. Please use a different email address.", email)));
+    }
 
     if (action == "update") {
         // We know 'body.id' exists, because we checked when validating the 'body.action'.
         user_id = body.id.clone().unwrap(); 
 
         // TODO: this should be a function, such as user_get().
-        let result: Option<Rover_users> = rover_users::table
+        let user_id_check: Option<Rover_users> = rover_users::table
         .filter(rover_users::id.eq(user_id.clone()))
         .first(&mut db)
         .optional().expect("Something went wrong querying the DB.");
 
-        if (result.is_none() == true) {
+        if (user_id_check.is_none() == true) {
             return status::Custom(Status::BadRequest, error_message(&format!("No user exists with the provided body.id: '{}'", user_id.clone())));
         }
 
@@ -133,18 +144,6 @@ pub async fn user_update(params: &Query_string, mut body: Json<User_update_body>
         .set((rover_users::first_name.eq(first_name), rover_users::last_name.eq(last_name), rover_users::email.eq(email), rover_users::permission.eq(permission)))
         .execute(&mut db).expect("Failed to update");
     } else if (action == "create") {
-        // Check if a user with the provided email already exists, we do not want duplicate emails.
-
-        // TODO: this should be a function, such as user_get().
-        let result: Option<Rover_users> = rover_users::table
-        .filter(rover_users::email.eq(email.clone()))
-        .first(&mut db)
-        .optional().expect("Something went wrong querying the DB.");
-
-        if (result.is_none() == false) {
-            return status::Custom(Status::BadRequest, error_message(&format!("'{}' is already a user. Please use a different email address.", email)));
-        }
-
         let user_insert = Rover_users {
             id: user_id.clone(),
             first_name: Some(first_name.clone()),

@@ -18,19 +18,19 @@ export default function Selector1(props) {
 
   return (
     <div className="selector1 selector">
-      <img className='AvatarPicture shading disable-select' style={{width:90,display:'flex',flexDirection:'column',alignSelf:'center',marginTop:0,borderRadius:4,backgroundColor:'grey'}} loading="lazy" id={random} src={props.src}/>
+      <img alt="Your profile picture" className='AvatarPicture shading disable-select' style={{width:90,display:'flex',flexDirection:'column',alignSelf:'center',marginTop:0,borderRadius:4,backgroundColor:'grey'}} loading="lazy" id={random} src={props.src}/>
         <div className="selector1_content">
           <p className='selector_header'>{props.header}</p>
           <div className='selector_media_actions'>
           <button className="selector_media_button">
             <label for="pfp_upload" className='selector_media_label'>
-              <img className="navButton disable-select" src="/icons/cloud_upload.svg" alt="Upload Button"/>
+              <img alt="An arrow pointing up out of a box" className="navButton disable-select" src="/icons/cloud_upload.svg"/>
               <p className='disable-select'>Upload</p>
             </label>
           </button>
           <input onChange={(e) => { read_image_from_file_insert_into_element(e.target.files[0], random); image_data.current = e.target.files[0]; upload_image(); }} hidden={true} id="pfp_upload" name="file" type="file" accept=".png, .gif, .jpg, .jpeg, .webp"/>
           <button onClick={() => { document.getElementById(random).src = null; image_data.current = "clear"; }} className='selector_media_button shading hover'>
-            <img className="navButton disable-select" src={`/icons/trash.svg`} alt="Clear Button"/>
+            <img alt="A trashcan" className="navButton disable-select" src={`/icons/trash.svg`}/>
             <p className='disable-select'>Clear</p>
           </button>
         </div>

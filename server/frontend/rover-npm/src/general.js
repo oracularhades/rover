@@ -26,10 +26,10 @@ function general() {
             
             return jwt;
         },
-        sortedObject: async function(unsortedData) {
+        sortedObject: function(unsortedData) {
             let sortedData = {};
             
-            await Object.keys(unsortedData).sort().forEach((key) => {
+            Object.keys(unsortedData).sort().forEach((key) => {
                 sortedData[key] = unsortedData[key];
             });
     

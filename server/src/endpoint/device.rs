@@ -45,6 +45,7 @@ pub async fn device_list(params: &Query_string) -> Custom<Value> {
 
 #[get("/get?<id>")]
 pub async fn device_get(params: &Query_string, id: Option<String>) -> Custom<Value> {
+    // Check params.id is not null or whitespace.
     if (id.is_none() == true) {
         return status::Custom(Status::BadRequest, error_message("params.id is null or whitespace."));
     }
@@ -52,23 +53,26 @@ pub async fn device_get(params: &Query_string, id: Option<String>) -> Custom<Val
     let mut db = crate::DB_POOL.get().expect("Failed to get a connection from the pool.");
     let sql: Config_sql = (&*SQL_TABLES).clone();
 
+    // Authenticate the user - this makes this endpoint authenticated.
     let request_authentication_output: Request_authentication_output = match request_authentication(None, params, "/device/get").await {
         Ok(data) => data,
         Err(e) => return status::Custom(Status::Unauthorized, not_authorized())
     };
 
     let devices_result: Vec<Rover_devices> = rover_devices::table
-    .filter(rover_devices::id.eq(id.unwrap()))
-    .filter(rover_devices::location.eq("onboard_client"))
-    .order(rover_devices::created.desc())
+    .filter(rover_devices::id.eq(id.unwrap())) // SQL injection safe version of: WHERE rover_devices.id=VALUE
+    .filter(rover_devices::location.eq("onboard_client")) // WHERE rover_devices.id='onboard_client'
+    .order(rover_devices::created.desc()) // ORDER BY rover_devices.created DESC
     .load::<Rover_devices>(&mut *db)
     .expect("Something went wrong querying the DB.");
 
+    // Loop through returned results and format the data to the API spec. For example, remove private system data from the results.
     let mut devices_public: Vec<Rover_devices_data_for_admins> = devices_result
     .into_iter()
     .map(Rover_devices_data_for_admins::from)
     .collect();
 
+    // Return results to client.
     status::Custom(Status::Ok, json!({
         "ok": true,
         "data": devices_public

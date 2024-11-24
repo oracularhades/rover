@@ -3,7 +3,7 @@ import { Rover, getCreds } from "./index.js";
 import { getRoverApiURL } from "./routing.js";
 
 async function list() {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/list`, {
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/list`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
@@ -21,7 +21,7 @@ async function list() {
 }
 
 async function get(id) {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/get?${general().objectToParams({ id })}`, {
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/get?${general().objectToParams({ id })}`, {
         method: 'GET',
         mode: 'cors',
         cache: 'default',
@@ -44,7 +44,7 @@ async function create(data) {
 }
 
 async function update(data) {
-    const response = await Rover(await getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/update?${general().objectToParams({ id: data.id })}`, {
+    const response = await Rover(getCreds()).fetch_wrapper(`${getRoverApiURL()}/device/update?${general().objectToParams({ id: data.id })}`, {
         method: 'POST',
         mode: 'cors',
         cache: 'default',

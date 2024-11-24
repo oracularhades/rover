@@ -5,7 +5,7 @@ export default function Network_traffic_Component(props) {
     const Right_Button = ((props) => {
         return (
             <button className='right_button'>
-                <img src={props.icon}/>
+                <img {...props} src={props.icon}/>
             </button>
         )
     });
@@ -18,9 +18,9 @@ export default function Network_traffic_Component(props) {
             </div>
 
             {props.hide_right_buttons != true && <div className='device_component_right'>
-                <Right_Button icon="/icons/device_logs.svg"/>
-                <Right_Button icon="/icons/pencil_border.svg"/>
-                <Right_Button icon="/icons/trash.svg"/>
+                <Right_Button alt="A device with a pulse graph" icon="/icons/device_logs.svg"/>
+                <Right_Button alt="A pencil writing on a line." icon="/icons/pencil_border.svg"/>
+                <Right_Button alt="A trashcan" icon="/icons/trash.svg"/>
             </div>}
         </div>
     )

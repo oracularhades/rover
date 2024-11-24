@@ -2,7 +2,7 @@ import { getCreds } from "./index.js";
 import { fetch_wrapper as fetch_wrapper_hades } from "hades-auth";
 
 async function fetch_wrapper(url, properties) {
-    const credsStatus = await getCreds();
+    const credsStatus = getCreds();
 
     if (credsStatus && credsStatus.additional_data) {
         let new_url_obj = new URL(url);

@@ -36,12 +36,6 @@ export default function Devices() {
         }
     }
 
-    const devices_ul = devices.map((data) => {
-        return (
-            <Device_Component data={data}/>
-        )
-    })
-
     if (loading == true) {
         return (
             <Home1 className="home_padding align_items_center">
@@ -50,10 +44,18 @@ export default function Devices() {
         )
     }
 
+    const devices_ul = devices.map((data) => {
+        return (
+            <Device_Component data={data}/>
+        )
+    });
+
     return (
         <Home1 className="home_padding default_row_gap">
             <h2>Devices</h2>
-            {devices.length >= 0 && devices_ul}
+            <div className="components_ul">
+                {devices.length >= 0 && devices_ul}
+            </div>
             {devices.length == 0 && <No_results tip="Enroll a device" tip_href="https://gitlab.com/oracularhades/rover/wiki/Enroll-a-device"/>}
         </Home1>
     )
